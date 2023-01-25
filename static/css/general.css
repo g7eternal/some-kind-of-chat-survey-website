@@ -1,0 +1,114 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  min-height: 600px;
+  min-width: 600px;
+}
+h1, h2, h3, h4, h5, h6, p {
+  padding: 0;
+  margin: 0;
+  font-weight: normal;
+}
+
+.tippy-box[data-theme~='material'] {
+  padding: 8px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 90%;
+  font-weight: normal !important;
+  border: 0;
+}
+.tippy-box h3 {
+  font-size: 120%;
+  font-weight: bold;
+}
+.tippy-box h4 {
+  font-size: 120%;
+  font-weight: normal;
+}
+
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url(/fonts/material.woff2) format('woff2');
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  vertical-align: bottom;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+/* Rules for using icons as black on a light background. */
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+/* Rules for using icons as white on a dark background. */
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+/* scrollbar */
+* {
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border: 1px solid #495057;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #454545;
+}
+
+::-webkit-scrollbar-track {
+  background: #252525;
+  border: 1px solid #495057;
+}
+
+/* misc fixups */
+.condense-em {
+  width: 4em;
+}
+.divider-donk {
+  border-top-color: rgba(255, 255, 128, 0.4);
+}
+.unpadded-content > * {
+  padding: 0 !important;
+}
