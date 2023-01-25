@@ -36,18 +36,23 @@
 </script>
 
 <style>
-
+  .input-group {
+    max-width: inherit;
+  }
 </style>
 
 <div class="input-group my-2 px-1">
-  <span class="input-group-text border-warning-subtle" id="defaultPoll_addEntryLbl">Add entry:</span>
-  <input type="text" class="form-control border-warning-subtle" bind:this={returnFocusTarget} bind:value={newOptionText}
+  <span class="input-group-text border-warning-subtle fs-5" id="defaultPoll_addEntryLbl">
+    Add entry:
+  </span>
+  <input type="text" class="form-control border-warning-subtle fs-5" 
+    bind:this={returnFocusTarget} bind:value={newOptionText}
     on:keydown={ (e) => { if (e.key === "Enter") addPollElement() } }
     aria-describedby="defaultPoll_addEntryLbl" placeholder="enter text here">
 
-  <button class="btn btn-outline-success border-warning-subtle" 
+  <button class="btn btn-outline-success border-warning-subtle fs-5" 
     disabled={$poll.allowVote} on:click={addPollElement}>
-    <span class="material-icons">&#xe148;</span>
+    <span class="material-icons align-text-bottom">&#xe148;</span>
     Add to poll
   </button>
 </div>

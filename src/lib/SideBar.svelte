@@ -21,7 +21,8 @@
 
 <style>
   ul {
-    max-width: 20em;
+    width: 16em;
+    max-width: 16em;
   }
   li {
     padding: 4px;

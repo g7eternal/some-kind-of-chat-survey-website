@@ -37,16 +37,20 @@
     }
   }
 
+  function toggleVoting () {
+    if ($poll.allowVote) stopVoting();
+    else startVoting();
+  }
+
   function clearLastWinner () {
     lastWinner = null;
   }
 </script>
 
 <style>
-  button {
+  .button-in-block {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    text-align: left;
   }
   .bottom-left {
     border-top-right-radius: 0;
@@ -61,35 +65,34 @@
 </style>
 
 <!--content-->
-{#if $poll.allowVote}
 
-<!-- $poll is active -->
-<button class="btn btn-danger w-100" on:click={stopVoting}>
-  <span class="material-icons">&#xe801;</span>
-  <b>Stop and show winner</b>
+<button 
+  class="btn w-100 text-start" 
+  class:btn-danger={$poll.allowVote}
+  class:btn-success={!$poll.allowVote}
+  class:button-in-block={!$poll.yes_no}
+  on:click={toggleVoting} >
+  {#if $poll.allowVote}
+    <span class="material-icons">&#xe801;</span>
+    <b>Stop and show winner</b>
+  {:else}
+    <span class="material-icons">&#xe801;</span>
+    <b>Start voting</b>
+  {/if}
 </button>
 
-{:else}
-
-<!-- $poll is closed -->
-<button class="btn btn-success w-100" on:click={startVoting}>
-  <span class="material-icons">&#xe801;</span>
-  <b>Start voting</b>
-</button>
-
+{#if !$poll.yes_no}
+  <div class="input-group">
+    <span class="input-group-text material-icons helper px-1"
+      use:tippy={voteHelper}>
+      &#xe88e;
+    </span>
+    <input type="text" class="form-control bottom-left" disabled={$poll.allowVote}
+      class:invalid={$settings.suggestCommand === $settings.voteCommand}
+      on:change={doValidation}
+      placeholder="Command" aria-label="Vote command" bind:value={$settings.voteCommand}>
+  </div>
 {/if}
-
-
-<div class="input-group">
-  <span class="input-group-text material-icons helper px-1"
-    use:tippy={voteHelper}>
-    &#xe88e;
-  </span>
-  <input type="text" class="form-control bottom-left" disabled={$poll.allowVote}
-    class:invalid={$settings.suggestCommand === $settings.voteCommand}
-    on:change={doValidation}
-    placeholder="Command" aria-label="Vote command" bind:value={$settings.voteCommand}>
-</div>
 
 <!-- celebratory block -->
 {#if lastWinner}

@@ -11,6 +11,14 @@
 
 <!-- content -->
 <TabContent>
+  <TabPane tabId="caption" disabled>
+    <span slot="tab">
+      View mode:
+    </span>
+
+    <DefaultPollTable />
+  </TabPane>
+
   <TabPane tabId="dataTable" active>
     <span slot="tab" class="text-success-emphasis">
       <span class='material-icons'>&#xe241;</span> Table
@@ -18,7 +26,7 @@
 
     <DefaultPollTable />
   </TabPane>
-  <TabPane tabId="dataChart" tab="">
+  <TabPane tabId="dataChart">
     <span slot="tab" class="text-success-emphasis">
       <span class='material-icons'>&#xf20c;</span> Graph
     </span>
@@ -26,7 +34,7 @@
     <DefaultPollChart />
   </TabPane>
 
-  <TabPane tabId="dataPieChart" tab="">
+  <TabPane tabId="dataPieChart">
     <span slot="tab" class="text-success-emphasis">
       <span class='material-icons'>&#xe1af;</span> Chart
     </span>

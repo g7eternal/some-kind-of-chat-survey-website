@@ -7,9 +7,10 @@
   .main {
     position: relative;
     margin: auto;
-    border: 12px solid white;
+    border: 10px solid white;
     border-radius: 100%;
     font-size: 48px;
+    font-weight: bold;
     padding-top: 16px;
     width: 150px;
     height: 150px;

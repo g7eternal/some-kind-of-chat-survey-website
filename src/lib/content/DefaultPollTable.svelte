@@ -60,9 +60,9 @@
   }
 </style>
 
-<DefaultPollAddEntry />
-
 <div class="table-outer">
+
+  <DefaultPollAddEntry />
 
   {#key data}
   <SvelteTable {columns} rows={data} sortBy="id" rowKey="id"

@@ -167,8 +167,8 @@ export class Poll { // container - list of poll entries
   }
 
   startVoting () {
-    /*if (!chatConnected) 
-      throw new Error("You are not connected to Twitch!");*/
+    if (!chatConnected) 
+      throw new Error("You are not connected to Twitch!");
     if (this.entries.size < 2) 
       throw new Error("Poll should have at least 2 items to choose from.");
     this.allowSuggest = false;

@@ -23,6 +23,7 @@ let baseSettings = {
   hideVotes: false,
   suggestCommand: "!suggest",
   voteCommand: "!vote",
+  raffleCommand: "!join",
   firstLogin: true,
   firstVisit: true
 };

@@ -1,5 +1,7 @@
 <script>
+  import { browser } from "$app/environment";
   import { fade } from 'svelte/transition';
+  import { Spinner } from "sveltestrap";
 
   import NavBar from "$lib/NavBar.svelte";
   import SideBar from "$lib/SideBar.svelte";
@@ -21,6 +23,14 @@
     if (currentBlock) activeComponent = componentMap[currentBlock];
     if (!activeComponent) throw new Error("Invalid component specified: " + currentBlock);
   }
+
+  // hack: load something heavy, and check how much time this will take
+  let preloadEnded = false;
+  if (browser) {
+    const img = new Image();
+    img.src = "./img/donkchat.gif";
+    img.onload = () => preloadEnded = true;
+  } else preloadEnded = true;
 </script>
 
 <style>
@@ -34,6 +44,9 @@
 <!-- content -->
 <div class="d-flex flex-column h-100 mh-100">
   <NavBar />
+
+  {#if preloadEnded}
+
   <div class="flex-grow-1 d-flex flex-row overflow-hidden">
     {#key activeComponent}
       <div class="main" in:fade={{duration:200, delay:0}}>
@@ -42,4 +55,12 @@
     {/key}
     <SideBar bind:currentBlock />
   </div>
+  
+  {:else}
+
+  <div class="w-100 h-100 d-flex">
+    <Spinner size="lg" color="secondary" type="border" class="m-auto" style="width: 4em; height: 4em;" />
+  </div>
+
+  {/if}
 </div>

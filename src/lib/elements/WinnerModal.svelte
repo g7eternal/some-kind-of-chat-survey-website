@@ -41,10 +41,10 @@
   .winner :global(.tw-circle) {
     border: 4px solid white;
     border-radius: 100%;
-    font-size: 24px;
-    padding-top: 8px;
-    width: 64px;
-    height: 64px;
+    font-size: 28px;
+    padding-top: 14px;
+    width: 80px;
+    height: 80px;
     text-transform: uppercase;
     display: flex;
     flex-flow: column nowrap;
@@ -62,7 +62,7 @@
 
 {#if winner}
 
-  <Modal body header="The winner is:" isOpen={open} {toggle}>
+  <Modal body header="The winner is:" isOpen={open} {toggle} centered={true}>
     <div class="winner">
       {#if html}
         {@html winner.renderText || "???"}
@@ -83,7 +83,7 @@
   {#if open}
   <div class="confetti">
     <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[0, 2000]} 
-      colorArray={["yellow", "lime", "green", "yellow", "yellow"]} size=12
+      colorArray={["yellow", "lime", "green", "yellow"]} size=12
       infinite duration=5000 amount=555 fallDistance="100vh" />
   </div>
   {/if}
