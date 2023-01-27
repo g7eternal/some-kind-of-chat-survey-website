@@ -1,8 +1,8 @@
 <script>
   import { settings } from "../utils/stores";
   import { yesNoPoll as poll } from "$lib/utils/yes_no.js";
-	import ChartSpoilerCover from "../elements/ChartSpoilerCover.svelte";
-	import YesNoFloater from "../elements/YesNoFloater.svelte";
+  import ChartSpoilerCover from "../elements/ChartSpoilerCover.svelte";
+  import YesNoFloater from "../elements/YesNoFloater.svelte";
 
   const motto = `Type YES or NO in chat to vote`;
 

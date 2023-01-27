@@ -1,7 +1,7 @@
 <script>
   import { Modal } from 'sveltestrap';
   import { Confetti } from "svelte-confetti"
-	import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
   export let winner = null, html = false;
 

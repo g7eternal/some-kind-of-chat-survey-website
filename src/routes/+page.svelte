@@ -3,12 +3,15 @@
   import { fade } from 'svelte/transition';
   import { Spinner } from "sveltestrap";
 
+  import { initialize as initTMI } from "$lib/utils/chat.js";
+  import { doTokenValidation as initTwitch } from "$lib/utils/twitch.js";
+
   import NavBar from "$lib/NavBar.svelte";
   import SideBar from "$lib/SideBar.svelte";
 
-	import DefaultPoll from "$lib/content/DefaultPoll.svelte";
-	import Raffle from "$lib/content/Raffle.svelte";
-	import YesNoPoll from "$lib/content/YesNoPoll.svelte";
+  import DefaultPoll from "$lib/content/DefaultPoll.svelte";
+  import Raffle from "$lib/content/Raffle.svelte";
+  import YesNoPoll from "$lib/content/YesNoPoll.svelte";
 
   const componentMap = {
     raffle: Raffle,
@@ -18,6 +21,11 @@
 
   let activeComponent = componentMap.default;
   let currentBlock = "default";
+
+  // initialize twitch chain:
+  if (browser) {
+    initTMI().then(initTwitch);
+  }
 
   $: {
     if (currentBlock) activeComponent = componentMap[currentBlock];

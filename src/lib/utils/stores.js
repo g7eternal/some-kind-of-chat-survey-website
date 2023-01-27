@@ -1,7 +1,6 @@
 import { browser } from '$app/environment' // sveltekit environment 
 import { writable } from "svelte/store";
 import { showAdviceFriend } from "./adviceFriend";
-import { setChannel } from "./twitch";
 
 // for use in get/setContext
 export const contextKey = Symbol();
@@ -21,6 +20,7 @@ const lsKey_Settings = "not-chat-vote.settings";
 let baseSettings = {
   channel: "",
   hideVotes: false,
+  hideAvatars: false,
   suggestCommand: "!suggest",
   voteCommand: "!vote",
   raffleCommand: "!join",
@@ -44,9 +44,6 @@ try {
     );
     baseSettings.firstVisit = false;
     settings.set(baseSettings);
-  }
-  if (baseSettings.channel) {
-    setChannel(baseSettings.channel);
   }
 }
 

@@ -1,125 +1,99 @@
-import tmi from "tmi.js";
-import { showAdviceFriend } from "./adviceFriend.js";
-import {settings, chat} from "./stores.js";
+import { browser } from '$app/environment' // sveltekit environment 
+import { writable } from "svelte/store";
 
-const hooks = []; // external message parsers
-let channel = "";
+import { setChannel } from "./chat";
 
-const client = new tmi.Client({
-  // connect options go here
-});
-client.connect().catch(console.error);
+export const twitchAppClientId = "h7vpg61dku6gdqpy2oefic8glbhzps"; // should this be stored in public git?
 
-client.on("connected", () => {
-  console.info("<TMI> Connection established!");
-  if (!channel) {
-    chat.update(c => { // show "login" button
-      c.busy = false;
-      c.connected = false;
-      return c;
-    });
-  } else connect();
-});
+class CSRFToken {
+  constructor () {
+    this.key = "not-chat-vote.csrf";
+    this.token = "token";
 
-client.on("join", (channel, _username, self) => {
-  if (self) console.log(`<TMI> Event: Joined chat room: ${channel}`);
-});
-client.on("part", (channel, _username, self) => {
-  if (self) console.log(`<TMI> Event: Left chat room: ${channel}`);
-});
-
-client.on("disconnected", (reason) => {
-  console.warn("<TMI> Disconnected. Reason: " + reason);
-  disconnect().then(connect);
-});
-
-client.on('message', (_channel, tags, message) => {
-  for (let i = 0; i < hooks.length; i++) {
-    hooks[i](tags, message); // run callback with parser
+    if (browser) {
+      this.token = localStorage.getItem(this.key) || this.generateNewToken();
+    }
   }
-});
 
-async function connect () {
-  if (!channel) return void console.warn("<TMI> Connect refused: No channel provided");
-  chat.update(c => {
-    c.channel = channel;
-    c.busy = true;
-    return c;
-  });
-  // make join request
-  try {
-    await client.join(channel);
-    console.info("<TMI> Joined channel: " + channel);
-    chat.update(c => {
-      c.busy = false;
-      c.connected = true;
-      return c;
-    });
-    // first time connection check:
-    settings.update(v => {
-      if (v.firstLogin) showAdviceFriend(
-        "You can start polling now.<br>Add some entries using suggestions from chat or by yourself, then click <b class='text-success-emphasis'>Start voting</b> button to proceed.",
-        "Nice!"
-      );
-      v.firstLogin = false;
-      return v;
-    });
-  } catch (e) {
-    console.warn("<TMI> Failed to join channel: " + channel, e);
-    chat.update(c => {
-      c.busy = false;
-      c.connected = false;
-      return c;
-    });
-    throw e;
+  generateNewToken () {
+    this.token = String(Math.random()).slice(2).padEnd(10, "0");
+    localStorage.setItem(this.key, this.token);
+    return this.token;
+  }
+
+  checkToken (t) {
+    return t === this.token;
   }
 }
+export const requestToken = new CSRFToken();
 
-async function disconnect (force=false) {
-  if (!force && !channel) return void console.warn("<TMI> Disconnect refused: No channel!");
-  chat.update(c => {
-    c.busy = true;
-    // c.connected = true; // we actually can't be sure we are connected
-    return c;
+
+export const auth = writable({});
+const lsKey_auth = "not-chat-vote.twitch";
+
+let baseAuth = {
+  channel: "",
+  access_token: null,
+  type: null,
+  scope: null,
+  busy: true,
+  valid: false
+};
+
+try {
+  if (!browser) throw new Error("Not a browser, no localStorage");
+  const storedSettings = JSON.parse(localStorage.getItem(lsKey_auth));
+  baseAuth = Object.assign(baseAuth, storedSettings);
+  baseAuth.valid = false; // we must revalidate the token!
+} catch (e) {
+  console.warn("Failed to parse stored settings", e);
+} finally { // various function which depend on being run after settings loaded
+  auth.set(baseAuth);
+  // automatically store settings:
+  auth.subscribe(v => {
+    // store into localstorage
+    if (browser) localStorage.setItem(lsKey_auth, JSON.stringify(v));
   });
-  // make part request
-  try {
-    await client.part(channel);
-    console.info("<TMI> Left channel: " + channel);
-    chat.update(c => {
-      c.busy = false;
-      c.connected = false;
-      return c;
-    });
-  } catch (e) {
-    console.warn("<TMI> Failed to leave channel: " + channel, e);
-    chat.update(c => {
-      c.busy = false;
-      // c.connected = false; // same shit as above
-      return c;
-    });
-    throw e;
+}
+
+// token validation
+export function doTokenValidation () {
+  if (!browser || !baseAuth.token) return;
+
+  auth.update(a => {
+    a.busy = true;
+    return a;
+  });
+  
+  window.fetch("https://id.twitch.tv/oauth2/validate", {
+    headers: {
+      "Authorization": "OAuth " + baseAuth.token
+    },
+    method: "GET"
+  }).then(r => r.json()).then(data => {
+    baseAuth.channel = data.login;
+    baseAuth.user_id = data.user_id;
+    baseAuth.expires = data.expires_in;
+    baseAuth.valid = true;
+  }).catch(err => {
+    console.error("Token validation failed", err);
+    baseAuth.channel = "";
+    delete baseAuth.user_id;
+    baseAuth.valid = false;
+  }).finally(() => {
+    baseAuth.busy = false;
+    setChannel(baseAuth.channel, baseAuth.valid);
+    auth.set(baseAuth); // trigger reactivity
+  });
+}
+
+export function doUserAuth (token) {
+  if (!browser) return;
+
+  baseAuth.token = token;
+  if (!token) { // token validation will pass through with no actual work
+    baseAuth.valid = false;
+    auth.set(baseAuth); // trigger reactivity
   }
-}
-
-export async function setChannel (newChannel="", doConnect=false) {
-  if (channel && doConnect) await disconnect(true);
-
-  channel = newChannel;
-  settings.update(v => {
-    v.channel = newChannel;
-    return v;
-  });
-
-  if (doConnect && channel) await connect();
-}
-
-export async function addHook (callback) {
-  hooks.push(callback);
-}
-export async function removeHook (callback) {
-  const hookIndex = hooks.findIndex(h => h === callback);
-  if (hookIndex < 0) return void console.trace("Invalid hook removal request: hook was not present!", callback);
-
-  hooks.splice(hookIndex, 1);
+  return doTokenValidation();
 }

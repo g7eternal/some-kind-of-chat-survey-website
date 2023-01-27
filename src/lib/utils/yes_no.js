@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { Poll } from "./poll";
-import { addHook, removeHook } from "./twitch";
+import { addHook, removeHook } from "./chat";
 
 const yes = ["yes", "voteyea"];
 const no  = [ "no", "votenay"];
@@ -10,8 +10,7 @@ no.push(NO.toLowerCase());
 
 class YesNoPoll extends Poll {
   constructor (...args) {
-    super(...args);
-    this.yes_no = true;
+    super("yes-no", ...args);
 
     // add two entries:
     const y = this.addEntry(
@@ -34,12 +33,10 @@ class YesNoPoll extends Poll {
 
     // replace hook:
     removeHook(this._hook);
-    this._hook = (tags, message) => {
+    this._hook = (tags, message, lcase) => {
       // Voting process
       if (this.allowVote) {
         if (this.voters.has(tags.username)) return;
-
-        const lcase = message.toLowerCase().split(/\s/);
         let voted = false;
 
         if (yes.some(matcher => lcase.includes(matcher))) {
@@ -65,7 +62,7 @@ class YesNoPoll extends Poll {
   }
 
   startVoting () {
-    super.startVoting();
+    super.startVoting(true);
     triggerPollReactivity();
     return this;
   }

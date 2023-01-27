@@ -1,16 +1,31 @@
 <script>
   import { chat } from "$lib/utils/stores.js";
-  import { setChannel } from "$lib/utils/twitch.js";
+  import { setChannel } from "$lib/utils/chat.js";
+  import { doUserAuth, auth } from "$lib/utils/twitch.js";
+  import UserImage from "./UserImage.svelte";
 
-  function askUsernameAndLogin () {
-    // todo: rework with actual api and dialogs?
-    const username = prompt(`> Mom, can we have "new chat.vote"?\n> No, son, we have "new chat.vote" at home.\n"new chat.vote" at home: *has no twitch api integration*\n\nJust enter your channel name for now:`);
-    if (!username) return;
+  function showAuthWindow () {
+    window.open("authorize", "_blank", "popup,width=300,height=300");
+  }
 
-    setChannel(username, true);
+  function parseAuthData (event) {
+    console.log(event);
+    if (!event.data || event.data.type !== "auth") return;
+
+    if (event.origin !== window.location.origin) {
+      console.warn("Event ignored: bad origin", event);
+      return;
+    }
+
+    if (event.data.result) {
+      doUserAuth(event.data.token);
+    } else {
+      logOut();
+    }
   }
 
   function logOut () {
+    doUserAuth(null);
     setChannel("", true);
   }
 </script>
@@ -40,18 +55,17 @@
   }
 </style>
 
+<svelte:window on:message={parseAuthData} />
+
 <!--content-->
-{#if $chat?.busy}
+{#if ($chat?.connected && $auth?.valid)}
 
-<div class="spinner-border text-secondary" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-
-{:else if $chat?.connected}
-
-<div class="text-end me-2">
+<div class="text-end">
   <span class="d-block small-caption">Connected to:</span>
   <b class="m-0">{$chat.channel}</b>
+</div>
+<div class="my-auto mx-2">
+  <UserImage user={$chat.channel} h="38px" />
 </div>
 <div>
   <button class="btn btn-outline btn-twitch text-start" on:click={logOut}>
@@ -60,11 +74,27 @@
   </button>
 </div>
 
+{:else if (!$chat?.connected && !$auth?.valid)}
+
+  {#if $chat?.busy || $auth?.busy}
+
+  <div class="spinner-border text-secondary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+
+  {:else}
+
+  <button class="btn btn-twitch shadow" on:click={showAuthWindow}>
+    <img src="img/twitch.svg" alt="Twitch" width="24" height="24" class="d-inline-block align-text-top">
+    Login with Twitch
+  </button>
+
+  {/if}
+
 {:else}
 
-<button class="btn btn-twitch shadow" on:click={askUsernameAndLogin}>
-  <img src="img/twitch.svg" alt="Twitch" width="24" height="24" class="d-inline-block align-text-top">
-  Login with Twitch
-</button>
+<div class="spinner-border text-secondary" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
 
 {/if}

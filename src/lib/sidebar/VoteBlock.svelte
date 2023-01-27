@@ -2,7 +2,7 @@
   import { tippy } from "../utils/tippy";
   import { settings } from "$lib/utils/stores.js";
   import { showAdviceFriend } from "$lib/utils/adviceFriend.js";
-	import WinnerModal from "../elements/WinnerModal.svelte";
+  import WinnerModal from "../elements/WinnerModal.svelte";
 
   export let poll;
 
@@ -70,7 +70,7 @@
   class="btn w-100 text-start" 
   class:btn-danger={$poll.allowVote}
   class:btn-success={!$poll.allowVote}
-  class:button-in-block={!$poll.yes_no}
+  class:button-in-block={$poll.type === "poll"}
   on:click={toggleVoting} >
   {#if $poll.allowVote}
     <span class="material-icons">&#xe801;</span>
@@ -81,7 +81,7 @@
   {/if}
 </button>
 
-{#if !$poll.yes_no}
+{#if $poll.type === "poll"}
   <div class="input-group">
     <span class="input-group-text material-icons helper px-1"
       use:tippy={voteHelper}>
@@ -96,5 +96,5 @@
 
 <!-- celebratory block -->
 {#if lastWinner}
-  <WinnerModal winner={lastWinner} html={Boolean($poll.yes_no)} on:toggle={clearLastWinner} />
+  <WinnerModal winner={lastWinner} html={$poll.type === "poll"} on:toggle={clearLastWinner} />
 {/if}

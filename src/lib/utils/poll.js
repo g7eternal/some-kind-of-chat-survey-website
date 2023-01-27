@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { settings, chat } from "./stores";
-import { addHook, removeHook } from "./twitch";
+import { addHook, removeHook } from "./chat";
 import { escapeHTML } from "./misc";
 
 const HIDE_SCORE = `<i class="opacity-50">[hidden]</i>`;
@@ -14,6 +14,7 @@ chat.subscribe(c => {
 export const chatOptions = {
   suggestCmd: "!suggest",
   voteCmd: "!vote",
+  raffleCmd: "!join",
   scoreVisibility: true
 };
 
@@ -24,8 +25,9 @@ class PollEntry { // element in poll to be voted on
     this.id = id;
 
     this.username = tags.username;
+    this.usercolor = tags.color || "white";
     this.author = tags["display-name"] || tags.username;
-    this.renderName = tags["render-name"] || `<span style="color:${tags.color || "white"}">${this.author}</span>`;
+    this.renderName = tags["render-name"] || `<span style="color:${this.usercolor}">${this.author}</span>`;
 
     this.rawText = tags.rawText || message;
     this.text = message;
@@ -71,8 +73,9 @@ class PollEntry { // element in poll to be voted on
 }
 
 export class Poll { // container - list of poll entries
-  constructor () {
+  constructor (type="poll") {
     this.id = ++pollCounter;
+    this.type = type;
     this.entryCounter = 0; // inner counter (key for entries)
 
     this.entries = new Map();
@@ -87,8 +90,7 @@ export class Poll { // container - list of poll entries
   }
 
   activate () {
-    this._hook = (tags, message="") => {
-      const lcase = message.toLowerCase().split(/\s/);
+    this._hook = (tags, message="", lcase) => {
 
       // Voting process
       if (this.allowVote && lcase[0] === chatOptions.voteCmd) {
@@ -166,10 +168,10 @@ export class Poll { // container - list of poll entries
     return true;
   }
 
-  startVoting () {
+  startVoting (skipSizeCheck=false) {
     if (!chatConnected) 
       throw new Error("You are not connected to Twitch!");
-    if (this.entries.size < 2) 
+    if (!skipSizeCheck && this.entries.size < 2) 
       throw new Error("Poll should have at least 2 items to choose from.");
     this.allowSuggest = false;
     this.allowVote = true;
@@ -254,6 +256,7 @@ settings.subscribe(v => {
   // update command trigger text
   chatOptions.suggestCmd = v.suggestCommand.toLowerCase();
   chatOptions.voteCmd = v.voteCommand.toLowerCase();
+  chatOptions.raffleCmd = v.raffleCommand.toLowerCase();
   // update score visibility
   chatOptions.scoreVisibility = !v.hideVotes;
   pollEntity.entries.forEach(e => e.updateScoreVisibility(chatOptions.scoreVisibility));

@@ -1,8 +1,8 @@
 <script>
   import { TabContent, TabPane } from 'sveltestrap';
-	import DefaultPollChart from "./DefaultPollChart.svelte";
-	import DefaultPollPie from "./DefaultPollPie.svelte";
-	import DefaultPollTable from "./DefaultPollTable.svelte";
+  import DefaultPollChart from "./DefaultPollChart.svelte";
+  import DefaultPollPie from "./DefaultPollPie.svelte";
+  import DefaultPollTable from "./DefaultPollTable.svelte";
 </script>
 
 <style>

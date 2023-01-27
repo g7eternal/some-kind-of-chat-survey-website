@@ -8,6 +8,7 @@
   import AdditionalOptions from "./elements/AdditionalOptions.svelte";
 	import RestartBlock from "./sidebar/RestartBlock.svelte";
   import ResetBlock from "./sidebar/ResetBlock.svelte";
+  import RaffleJoinBlock from "./sidebar/RaffleJoinBlock.svelte";
 	
 
   export let currentBlock;
