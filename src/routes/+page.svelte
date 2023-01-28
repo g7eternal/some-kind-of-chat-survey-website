@@ -4,7 +4,7 @@
   import { Spinner } from "sveltestrap";
 
   import { initialize as initTMI } from "$lib/utils/chat.js";
-  import { doTokenValidation as initTwitch } from "$lib/utils/twitch.js";
+  import { initTwitch } from "$lib/utils/twitch.js";
 
   import NavBar from "$lib/NavBar.svelte";
   import SideBar from "$lib/SideBar.svelte";
@@ -48,6 +48,10 @@
     overflow: auto;
   }
 </style>
+
+<svelte:head>
+  <title>not chat.vote</title>
+</svelte:head>
 
 <!-- content -->
 <div class="d-flex flex-column h-100 mh-100">

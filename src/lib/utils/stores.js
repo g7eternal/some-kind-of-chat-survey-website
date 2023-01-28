@@ -19,13 +19,15 @@ const lsKey_Settings = "not-chat-vote.settings";
 
 let baseSettings = {
   channel: "",
+  hideMessages: false,
   hideVotes: false,
   hideAvatars: false,
   suggestCommand: "!suggest",
   voteCommand: "!vote",
   raffleCommand: "!join",
   firstLogin: true,
-  firstVisit: true
+  firstVisit: true,
+  firstRaffle: true,
 };
 
 try {

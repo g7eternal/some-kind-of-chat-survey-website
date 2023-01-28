@@ -2,7 +2,11 @@
   import { chat } from "$lib/utils/stores.js";
   import { setChannel } from "$lib/utils/chat.js";
   import { doUserAuth, auth } from "$lib/utils/twitch.js";
+  import { hardReset as mainPollHardReset } from "../utils/poll";
+  import { raffle } from "../utils/raffle";
+  import { yesNoPoll } from "../utils/yes_no";
   import UserImage from "./UserImage.svelte";
+	import UserProfileLink from "./UserProfileLink.svelte";
 
   function showAuthWindow () {
     window.open("authorize", "_blank", "popup,width=300,height=300");
@@ -27,6 +31,9 @@
   function logOut () {
     doUserAuth(null);
     setChannel("", true);
+    $yesNoPoll.reset();
+    $raffle.reset();
+    mainPollHardReset();
   }
 </script>
 
@@ -62,15 +69,17 @@
 
 <div class="text-end">
   <span class="d-block small-caption">Connected to:</span>
-  <b class="m-0">{$chat.channel}</b>
+  <UserProfileLink user={$chat.channel}>
+    <b class="m-0">{$chat.channel}</b>
+  </UserProfileLink>
 </div>
 <div class="my-auto mx-2">
-  <UserImage user={$chat.channel} h="38px" />
+  <UserImage user={$chat.channel} h="38px" rainbow={true} />
 </div>
 <div>
   <button class="btn btn-outline btn-twitch text-start" on:click={logOut}>
-      <span class="material-icons">&#xe9ba;</span>
-      Log out
+    <span class="material-icons">&#xe9ba;</span>
+    Log out
   </button>
 </div>
 
@@ -78,8 +87,8 @@
 
   {#if $chat?.busy || $auth?.busy}
 
-  <div class="spinner-border text-secondary" role="status">
-    <span class="visually-hidden">Loading...</span>
+  <div class="spinner-border text-secondary" role="status" title="Connecting...">
+    <span class="visually-hidden">Connecting...</span>
   </div>
 
   {:else}
@@ -93,7 +102,7 @@
 
 {:else}
 
-<div class="spinner-border text-secondary" role="status">
+<div class="spinner-border text-secondary" role="status" title="Loading...">
   <span class="visually-hidden">Loading...</span>
 </div>
 

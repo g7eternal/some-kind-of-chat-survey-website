@@ -2,14 +2,17 @@
   import { settings } from "$lib/utils/stores.js";
   import { yesNoPoll } from "./utils/yes_no";
   import { poll } from "./utils/poll";
+  import { raffle } from "./utils/raffle";
+  import { showAdviceFriend } from "./utils/adviceFriend";
 
-	import SuggestBlock from "./sidebar/SuggestBlock.svelte";
+  import SuggestBlock from "./sidebar/SuggestBlock.svelte";
   import VoteBlock from "./sidebar/VoteBlock.svelte";
   import AdditionalOptions from "./elements/AdditionalOptions.svelte";
-	import RestartBlock from "./sidebar/RestartBlock.svelte";
+  import RestartBlock from "./sidebar/RestartBlock.svelte";
   import ResetBlock from "./sidebar/ResetBlock.svelte";
   import RaffleJoinBlock from "./sidebar/RaffleJoinBlock.svelte";
-	
+  import RaffleDrawWinnerBlock from "./sidebar/RaffleDrawWinnerBlock.svelte";
+  
 
   export let currentBlock;
 
@@ -17,6 +20,14 @@
     const newActive = event.currentTarget.dataset.scene;
 
     currentBlock = newActive; 
+
+    if (newActive === "raffle" && $settings.firstRaffle) {
+      $settings.firstRaffle = false;
+      showAdviceFriend(
+        "You can use this to choose a random user from your chat. Might come in handy, if you're looking for a way to organise some kind of lottery.",
+        "Raffle mode"
+      )
+    }
   }
 </script>
 
@@ -87,6 +98,29 @@
     
   {/if}
 
+  {#if currentBlock === "raffle"}
+
+    <li class="nav-item">
+      <RaffleJoinBlock />
+    </li>
+
+    <li class="nav-item">
+      <div class="form-check my-1">
+        <input class="form-check-input" type="checkbox" value=""
+          id="pollOptions_hideAvatars" bind:checked={$settings.hideAvatars}>
+        <label class="form-check-label" for="pollOptions_hideAvatars">
+          <span class="material-icons">&#xe8f5;</span>
+          Hide profile images
+        </label>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <RaffleDrawWinnerBlock />
+    </li>
+    
+  {/if}
+
   <li class="nav-item">
     <AdditionalOptions />
   </li>
@@ -107,6 +141,12 @@
   {#if currentBlock === "yesno"}
     <li class="nav-item">
       <RestartBlock poll={yesNoPoll} />
+    </li>
+  {/if}
+
+  {#if currentBlock === "raffle"}
+    <li class="nav-item">
+      <RestartBlock poll={raffle} />
     </li>
   {/if}
 

@@ -42,7 +42,7 @@
 
 <div class="donk" style:width={w || h} style:height={h} in:scale={{duration:200}}>
   <div class="donk backlay">
-    <img src="/favicon.png" alt="">
+    <img src="favicon.png" alt="">
   </div>
   <div class="donk overlay" class:animate={animate}>
     <svg style:width={w} height={h} viewBox="0 0 52.916666 52.916666">

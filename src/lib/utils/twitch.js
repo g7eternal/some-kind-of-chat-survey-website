@@ -97,3 +97,14 @@ export function doUserAuth (token) {
   }
   return doTokenValidation();
 }
+
+export function initTwitch () {
+  if (!baseAuth.token) {
+    auth.update(a => {
+      a.busy = false;
+      return a;
+    });
+    return;
+  }
+  return doTokenValidation();
+}

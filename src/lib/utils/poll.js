@@ -1,10 +1,9 @@
 import { writable } from "svelte/store";
 import { settings, chat } from "./stores";
 import { addHook, removeHook } from "./chat";
-import { escapeHTML } from "./misc";
+import { parseMessage } from "./misc";
 
 const HIDE_SCORE = `<i class="opacity-50">[hidden]</i>`;
-const linkRgx = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 
 let chatConnected = false;
 chat.subscribe(c => {
@@ -33,11 +32,7 @@ class PollEntry { // element in poll to be voted on
     this.text = message;
     this.lowerText = this.text.toLowerCase();
 
-    // todo: parse emotes?
-    this.renderText = escapeHTML(message).replace(
-      linkRgx,
-      link => `<a href="${link}" target="_blank">${link}</a>`
-    );
+    this.renderText = parseMessage(this.text);
 
     this.color = [ // rgb palette
       Math.floor(80 + Math.random()*99),
@@ -137,10 +132,10 @@ export class Poll { // container - list of poll entries
     this.entries.forEach(entry => {
       entry.setScore(0);
     });
+    this.suggestors.clear();
     this.voters.clear();
     this.winner = null;
-    this.stopVoting();
-    return this;
+    return this.stopVoting();
   }
 
   addEntry (user, message) {

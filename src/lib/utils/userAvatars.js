@@ -16,7 +16,6 @@ const rateLimit = {
 };
 
 export function getAvatar (username) {
-  console.log
   return new Promise((resolve, reject) => {
     try {
       

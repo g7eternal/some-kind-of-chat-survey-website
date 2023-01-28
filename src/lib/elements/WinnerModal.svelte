@@ -2,6 +2,7 @@
   import { Modal } from 'sveltestrap';
   import { Confetti } from "svelte-confetti"
   import { createEventDispatcher } from "svelte";
+	import UserProfileLink from "./UserProfileLink.svelte";
 
   export let winner = null, html = false;
 
@@ -74,7 +75,9 @@
     {#if winner.author}
     <div class="author">
       <span class="text-secondary">Suggested by:</span>
-      {@html winner.renderName}
+      <UserProfileLink user={winner.username}>
+        {@html winner.renderName}
+      </UserProfileLink>
     </div>
     {/if}
   </Modal>

@@ -1,5 +1,6 @@
 <script>
   export let spoilerCaption = "Votes are hidden";
+  export let scale = 1;
 </script>
 
 <style>
@@ -27,7 +28,7 @@
   }
 </style>
 
-<div class="main">
+<div class="main" style:transform={`scale(${scale})`}>
   <div class="m-auto text-center">
     <span class="material-icons">
       &#xe8f5;

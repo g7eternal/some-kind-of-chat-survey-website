@@ -20,7 +20,15 @@
 </button>
 
 <!-- offcanvas content-->
-<Offcanvas {isOpen} {toggle} placement="start" header="About this page">
+<Offcanvas {isOpen} {toggle} placement="start" header="Additional settings">
+  <div class="d-flex h-25">
+    <h5 class="m-auto">
+      <img src="./img/donkchat.gif" alt="DonkChat" width="48" height="48">
+      This section is under construction.
+    </h5>
+  </div>
+  <hr>
+  <h4>About this page</h4>
   <p>
     This page is an experimental redesign of
     <a href="https://chat.vote" rel="noopener noreferrer">chat.vote</a>

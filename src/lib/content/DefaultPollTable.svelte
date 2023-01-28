@@ -1,6 +1,7 @@
 <script>
   import SvelteTable from "svelte-table";
   import DefaultPollAddEntry from "./DefaultPollAddEntry.svelte";
+  import UserProfileLinkRenderer from "../elements/UserProfileLinkRenderer.svelte";
 
   import { poll } from "$lib/utils/poll.js";
 
@@ -33,7 +34,9 @@
     {
       key: "renderName",
       title: "Author",
-      value: v => v.renderName,
+      value: v => v.username,
+      renderComponent: UserProfileLinkRenderer,
+      class: "no-decoration",
       sortable: true,
     },
     {

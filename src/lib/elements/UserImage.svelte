@@ -6,6 +6,9 @@
 
   export let user;
   export let h = "auto", w = "";
+  export let rainbow = false, color = "";
+
+  const colorFix = rainbow ? "yellow" : color;
 </script>
 
 <style>
@@ -21,7 +24,7 @@
 
 {#if $settings.hideAvatars}
 
-<UnknownUserImage {user} {w} {h} animate={true} />
+<UnknownUserImage {user} {w} {h} animate={rainbow} color={colorFix} />
 
 {:else}
 
