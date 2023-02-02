@@ -2,6 +2,8 @@
 
 Wow, what a new and original idea of a website! Surely nobody has ever made this one before.
 
+You can play around with this application here: [not chat.vote](https://g7eternal.com/not-chat-vote/)
+
 ## How to setup
 
 Here's a simple way to run app locally.
