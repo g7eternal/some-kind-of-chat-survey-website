@@ -1,6 +1,9 @@
 <script>
   import { Accordion, AccordionItem, Offcanvas } from "sveltestrap";
   import { raffle } from "../utils/raffle";
+  import { tippy } from "../utils/tippy";
+
+  export let mini = false;
   
   let isOpen = false;
   let history = [];
@@ -17,6 +20,9 @@
 </script>
 
 <style>
+  #revealRaffleHistory {
+    font-size: inherit;
+  }
   :global(.accordion-header) {
     filter: hue-rotate(270deg);
   }
@@ -25,9 +31,12 @@
 <!-- toggler button (mounts into wherever) -->
 <button class="btn btn-outline-primary w-100 text-start mb-2"
   disabled={$raffle.winnerHistory.size < 1}
-  on:click={toggle}>
+  use:tippy={{placement: "left", content: "View previous winners and their messages"}}
+  on:click={toggle} id="revealRaffleHistory">
   <span class="material-icons">&#xe889;</span>
-  Previous winners
+  {#if !mini}
+    Previous winners
+  {/if}
 </button>
 
 <!-- offcanvas content-->

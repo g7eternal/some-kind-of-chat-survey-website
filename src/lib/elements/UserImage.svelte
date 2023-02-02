@@ -16,6 +16,9 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
+    max-height: 30vw;
+    max-width: 30vw;
+    margin: auto;
   }
   .loader {
     opacity: 0.3;

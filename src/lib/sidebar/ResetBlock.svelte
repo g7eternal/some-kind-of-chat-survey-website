@@ -1,7 +1,9 @@
 <script>
   import { tippy } from "../utils/tippy";
   import { showConfirmAdviceFriend } from "$lib/utils/adviceFriend.js";
-  import { poll, hardReset } from "$lib/utils/poll.js";
+  import { hardReset } from "$lib/utils/poll.js";
+
+  export let mini = false;
 
   const tooltip = {
     placement: "left",
@@ -17,10 +19,18 @@
   }
 </script>
 
+<style>
+  button {
+    font-size: inherit;
+  }
+</style>
+
 <!-- content -->
 <button class="btn btn-outline-danger w-100 text-start" 
   use:tippy={tooltip}
   on:click={restartPoll}>
   <span class="material-icons">&#xe872;</span>
-  <b>Reset poll</b>
+  {#if !mini}
+    <b>Reset poll</b>
+  {/if}
 </button>

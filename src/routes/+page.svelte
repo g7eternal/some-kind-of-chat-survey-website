@@ -13,6 +13,12 @@
   import Raffle from "$lib/content/Raffle.svelte";
   import YesNoPoll from "$lib/content/YesNoPoll.svelte";
 
+  let sidebarPresence = true;
+  function changeSidebarPresence () {
+    sidebarPresence = (window.innerHeight < window.innerWidth);
+  }
+  if (browser) changeSidebarPresence(); // toggles immediate presence check
+
   const componentMap = {
     raffle: Raffle,
     yesno: YesNoPoll,
@@ -46,6 +52,15 @@
     flex: 1 0 0;
     max-height: 100%;
     overflow: auto;
+    padding: 0 1em;
+  }
+
+  @media all and (orientation:portrait) {
+    .main {
+      position: relative;
+      padding: 0 64px 0 4px;
+      width: 100%;
+    }
   }
 </style>
 
@@ -53,19 +68,22 @@
   <title>not chat.vote</title>
 </svelte:head>
 
+<svelte:window on:resize={changeSidebarPresence} />
+
 <!-- content -->
-<div class="d-flex flex-column h-100 mh-100">
+<div class="d-flex flex-column w-100 h-100 mh-100">
   <NavBar />
 
-  {#if preloadEnded}
+  {#if browser && preloadEnded}
 
-  <div class="flex-grow-1 d-flex flex-row overflow-hidden">
+  <div class="flex-grow-1 d-flex flex-row overflow-hidden position-relative">
     {#key activeComponent}
       <div class="main" in:fade={{duration:200, delay:0}}>
         <svelte:component this={activeComponent} />
       </div>
     {/key}
-    <SideBar bind:currentBlock />
+
+    <SideBar bind:currentBlock visibility={sidebarPresence} />
   </div>
   
   {:else}

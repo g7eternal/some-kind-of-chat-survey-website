@@ -19,6 +19,11 @@
     max-width: 1200px;
     margin: auto;
   }
+
+  .user-image {
+    max-height: 30vw;
+    max-width: 30vw;
+  }
   .winner-name {
     text-shadow: 2px 2px 2px rgba(100, 100, 100, 0.5);
     font-weight: bold;
@@ -37,7 +42,7 @@
     font-weight: bold;
     padding: 4px .5em;
     border-bottom: 1px solid gray;
-    color:rgba(255, 255, 196, 0.4);
+    color:rgba(190, 160, 132, 0.7);
   }
   .messages {
     position: relative;
@@ -62,7 +67,7 @@
 {#if $raffle.winner}
 <div class="d-flex flex-row h-100 w-100 main">
 
-  <div style:width={imgSize} style:height={imgSize} class="my-auto me-2">
+  <div style:width={imgSize} style:height={imgSize} class="user-image my-auto me-2">
     <UserImage h={imgSize} w={imgSize}
       user={$raffle.winner.username} color={$raffle.winner.usercolor}
       />

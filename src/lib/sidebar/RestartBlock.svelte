@@ -3,6 +3,7 @@
   import { showAdviceFriend } from "$lib/utils/adviceFriend.js";
 
   export let poll;
+  export let mini = false;
 
   const tooltip = {
     placement: "left",
@@ -15,10 +16,18 @@
   }
 </script>
 
+<style>
+  button {
+    font-size: inherit;
+  }
+</style>
+
 <!-- content -->
 <button class="btn btn-outline-warning w-100 text-start" 
   use:tippy={tooltip}
   on:click={restartPoll}>
   <span class="material-icons">&#xf053;</span>
-  <b>Restart poll</b>
+  {#if !mini}
+    <b>Restart poll</b>
+  {/if}
 </button>

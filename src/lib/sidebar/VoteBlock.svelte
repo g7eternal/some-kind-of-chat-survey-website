@@ -5,6 +5,7 @@
   import WinnerModal from "../elements/WinnerModal.svelte";
 
   export let poll;
+  export let mini = false;
 
   const voteHelper = {
     placement: "right",
@@ -48,6 +49,9 @@
 </script>
 
 <style>
+  button, input {
+    font-size: inherit;
+  }
   .button-in-block {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -70,18 +74,27 @@
   class="btn w-100 text-start" 
   class:btn-danger={$poll.allowVote}
   class:btn-success={!$poll.allowVote}
-  class:button-in-block={$poll.type === "poll"}
+  class:button-in-block={$poll.type === "poll" && !mini}
+  use:tippy={{placement: "left", content: (
+    $poll.allowVote ? 
+    "Ends current poll and shows the winner" :
+    "Starts the poll"
+  )}}
   on:click={toggleVoting} >
   {#if $poll.allowVote}
     <span class="material-icons">&#xe801;</span>
-    <b>Stop and show winner</b>
+    {#if !mini}
+      <b>Stop and show winner</b>
+    {/if}
   {:else}
     <span class="material-icons">&#xe801;</span>
-    <b>Start voting</b>
+    {#if !mini}
+      <b>Start voting</b>
+    {/if}
   {/if}
 </button>
 
-{#if $poll.type === "poll"}
+{#if $poll.type === "poll" && !mini}
   <div class="input-group">
     <span class="input-group-text material-icons helper px-1"
       use:tippy={voteHelper}>

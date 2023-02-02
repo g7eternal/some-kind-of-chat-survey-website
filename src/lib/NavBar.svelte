@@ -8,8 +8,8 @@
 </style>
 
 <nav class="navbar navbar-expand bg-body-tertiary py-1">
-  <div class="container-fluid">
-    <a class="navbar-brand" href=".">
+  <div class="container-fluid px-1">
+    <a class="navbar-brand mx-2" href=".">
       <img src="favicon.png" alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
       not chat.vote
     </a>

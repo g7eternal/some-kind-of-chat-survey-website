@@ -1,10 +1,12 @@
 <script>
+  import { browser } from "$app/environment";
   import { chat } from "$lib/utils/stores.js";
   import { setChannel } from "$lib/utils/chat.js";
   import { doUserAuth, auth } from "$lib/utils/twitch.js";
   import { hardReset as mainPollHardReset } from "../utils/poll";
   import { raffle } from "../utils/raffle";
   import { yesNoPoll } from "../utils/yes_no";
+  import { tippy } from "../utils/tippy";
   import UserImage from "./UserImage.svelte";
 	import UserProfileLink from "./UserProfileLink.svelte";
 
@@ -35,6 +37,12 @@
     $raffle.reset();
     mainPollHardReset();
   }
+
+  let showCaptions = false;
+  function toggleCaptions () {
+    showCaptions = (window.innerWidth > window.innerHeight) && (window.innerWidth > 600);
+  }
+  if (browser) toggleCaptions();
 </script>
 
 <style>
@@ -62,7 +70,7 @@
   }
 </style>
 
-<svelte:window on:message={parseAuthData} />
+<svelte:window on:message={parseAuthData} on:resize={toggleCaptions} />
 
 <!--content-->
 {#if ($chat?.connected && $auth?.valid)}
@@ -77,9 +85,12 @@
   <UserImage user={$chat.channel} h="38px" rainbow={true} />
 </div>
 <div>
-  <button class="btn btn-outline btn-twitch text-start" on:click={logOut}>
+  <button class="btn btn-outline btn-twitch text-start" on:click={logOut}
+    use:tippy={{placement: "left", content: "Disconnect from chat and log out"}}>
     <span class="material-icons">&#xe9ba;</span>
-    Log out
+    {#if showCaptions}
+      Log out
+    {/if}
   </button>
 </div>
 
@@ -87,23 +98,24 @@
 
   {#if $chat?.busy || $auth?.busy}
 
-  <div class="spinner-border text-secondary" role="status" title="Connecting...">
+  <div class="spinner-border text-secondary me-2" role="status" title="Connecting...">
     <span class="visually-hidden">Connecting...</span>
   </div>
 
   {:else}
 
-  <button class="btn btn-twitch shadow" on:click={showAuthWindow}>
+  <button class="btn btn-twitch shadow" on:click={showAuthWindow}
+    use:tippy={{placement: "left", content: "Connect using your Twitch account"}}>
     <img src="img/twitch.svg" alt="Twitch" width="24" height="24" class="d-inline-block align-text-top">
-    Login with Twitch
+    {#if showCaptions}
+      Login
+    {/if}
   </button>
 
   {/if}
 
 {:else}
-
-<div class="spinner-border text-secondary" role="status" title="Loading...">
+<div class="spinner-border text-secondary me-2" role="status" title="Loading...">
   <span class="visually-hidden">Loading...</span>
 </div>
-
 {/if}

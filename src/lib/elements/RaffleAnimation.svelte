@@ -200,11 +200,12 @@
     user-select: none;
     pointer-events: none;
     border-bottom: 4px solid gray;
+    display: flex;
   }
 
   .username-caption {
     transform: translateX(-50%);
-    font-size: 1.4em;
+    font-size: 24px;
     opacity: 0.8;
     text-align: center;
     text-shadow: 0px 0px 4px black;
@@ -247,7 +248,7 @@
   }
   .panel button {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 32px;
   }
 
   .confetti {
@@ -275,6 +276,9 @@
       width: unset;
       max-width: unset;
       flex: 1 0 auto;
+    }
+    .glower {
+      top: 32%;
     }
   }
 </style>

@@ -1,9 +1,16 @@
 <script>
+  import { browser } from "$app/environment";
   import { poll } from "$lib/utils/poll.js";
   import { showAdviceFriend } from "$lib/utils/adviceFriend";
 
   let newOptionText = "";
   let returnFocusTarget = null;
+
+  let showCaptions = false;
+  function toggleCaptions () {
+    showCaptions = (window.innerWidth > window.innerHeight) && (window.innerWidth > 800);
+  }
+  if (browser) toggleCaptions();
 
   function addPollElement () {
     const text = newOptionText.trim();
@@ -41,9 +48,12 @@
   }
 </style>
 
+<svelte:window on:resize={toggleCaptions} />
+
 <div class="input-group my-2 px-1">
   <span class="input-group-text border-warning-subtle fs-5" id="defaultPoll_addEntryLbl">
-    Add entry:
+    <span class="material-icons align-text-bottom">&#xe03b;</span>
+    {#if showCaptions} Add entry: {/if}
   </span>
   <input type="text" class="form-control border-warning-subtle fs-5" 
     bind:this={returnFocusTarget} bind:value={newOptionText}
@@ -53,6 +63,6 @@
   <button class="btn btn-outline-success border-warning-subtle fs-5" 
     disabled={$poll.allowVote} on:click={addPollElement}>
     <span class="material-icons align-text-bottom">&#xe148;</span>
-    Add to poll
+    {#if showCaptions} Add to poll {/if}
   </button>
 </div>

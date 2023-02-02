@@ -1,6 +1,6 @@
 <script>
   import SvelteTable from "svelte-table";
-  import DefaultPollAddEntry from "./DefaultPollAddEntry.svelte";
+  import DefaultPollAddEntry from "../elements/AddEntryBlock.svelte";
   import UserProfileLinkRenderer from "../elements/UserProfileLinkRenderer.svelte";
 
   import { poll } from "$lib/utils/poll.js";

@@ -21,10 +21,17 @@
 
   .donk {
     position: relative;
+    margin: auto;
+    display: flex;
+    max-height: 30vw;
+    max-width: 30vw;
   }
-  img {
+  img, svg {
     width: 100%;
     height: 100%;
+    max-height: 30vw;
+    max-width: 30vw;
+    margin: auto;
   }
   .backlay {
     width: 100%;

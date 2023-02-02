@@ -1,5 +1,8 @@
 <script>
+  import { tippy } from "../utils/tippy";
   import { Offcanvas } from "sveltestrap";
+
+  export let mini = false;
   
   let isOpen = false;
   function toggle () {
@@ -8,15 +11,22 @@
 </script>
 
 <style>
+  #openAdditionalSettings {
+    font-size: inherit;
+  }
   p {
     margin: 12px 0;
   }
 </style>
 
 <!-- toggler button (mounts into wherever) -->
-<button class="btn btn-secondary w-100 text-start" on:click={toggle}>
+<button class="btn btn-secondary w-100 text-start" 
+  use:tippy={{placement: "left", content: "Show additional settings"}}
+  on:click={toggle} id="openAdditionalSettings">
   <span class="material-icons">&#xe8b9;</span>
-  More settings...
+  {#if !mini}
+    More settings...
+  {/if}
 </button>
 
 <!-- offcanvas content-->

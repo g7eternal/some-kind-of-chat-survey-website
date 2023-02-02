@@ -4,6 +4,8 @@
   import { raffle as poll } from "$lib/utils/raffle.js";
   import { showAdviceFriend } from "$lib/utils/adviceFriend.js";
 
+  export let mini = false;
+
   const suggestHelper = {
     placement: "right",
     content: "<h3>Join command</h3>People can join by typing this message", 
@@ -29,7 +31,10 @@
 </script>
 
 <style>
-  button {
+  button, input {
+    font-size: inherit;
+  }
+  .hasNeighbors {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     text-align: left;
@@ -47,14 +52,23 @@
 </style>
 
 <!--content-->
-<button class="btn w-100"
+<button class="btn w-100 text-start"
+  class:hasNeighbors={!mini}
   class:btn-success={!$poll.allowVote}
   class:btn-danger={$poll.allowVote}
+  use:tippy={{placement: "left", content: (
+    $poll.allowVote ? 
+    "Closes the raffle and disallows joining" :
+    "Allows users to join the raffle"
+  )}}
   on:click={toggleJoining}>
   <span class="material-icons">&#xe175;</span>
-  {$poll.allowVote ? "Close" : "Open"} raffle
+  {#if !mini}
+    {$poll.allowVote ? "Close" : "Open"} raffle
+  {/if}
 </button>
 
+{#if !mini}
 <div class="input-group">
   <span class="input-group-text material-icons helper px-1"
     use:tippy={suggestHelper}>
@@ -65,3 +79,4 @@
     on:change={doValidation}
     aria-label="Suggestion command" bind:value={$settings.raffleCommand}>
 </div>
+{/if}

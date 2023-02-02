@@ -1,6 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import { fade, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
 
   import tippy from "tippy.js";
   import 'tippy.js/animations/shift-away-extreme.css';
@@ -22,7 +22,7 @@
       tippyInstance = tippy(tippyRoot, {
         animation: 'shift-away-extreme',
         arrow: false,
-        maxWidth: 450,
+        maxWidth: Math.min(window.innerWidth, 800)/2,
         duration: [150, 0],
         theme: "material",
         placement: "right-end",
