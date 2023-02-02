@@ -96,5 +96,5 @@
 
 <!-- celebratory block -->
 {#if lastWinner}
-  <WinnerModal winner={lastWinner} html={$poll.type === "poll"} on:toggle={clearLastWinner} />
+  <WinnerModal winner={lastWinner} html={true} on:toggle={clearLastWinner} />
 {/if}

@@ -2,11 +2,10 @@ import { writable } from "svelte/store";
 import { Poll } from "./poll";
 import { addHook, removeHook } from "./chat";
 
-const yes = ["yes", "voteyea"];
-const no  = [ "no", "votenay"];
 const YES = "YEA", NO = "NAY";
-yes.push(YES.toLowerCase()); 
-no.push(NO.toLowerCase());
+
+const yes = ["yes", "voteyea"]; yes.push(YES.toLowerCase()); 
+const no  = [ "no", "votenay"]; no.push(NO.toLowerCase());
 
 class YesNoPoll extends Poll {
   constructor (...args) {
@@ -19,7 +18,7 @@ class YesNoPoll extends Poll {
     );
     this.entries.delete(y.id);
     y.id = YES;
-    y.renderText = `<div class="tw-circle voteyea">YEA</div>`;
+    y.renderText = `<div class="tw-circle voteyea">${YES}</div>`;
     this.entries.set(y.id, y);
     
     const n = this.addEntry(
@@ -28,7 +27,7 @@ class YesNoPoll extends Poll {
     );
     this.entries.delete(n.id);
     n.id = NO;
-    n.renderText = `<div class="tw-circle votenay">NAY</div>`;
+    n.renderText = `<div class="tw-circle votenay">${NO}</div>`;
     this.entries.set(n.id, n);
 
     // replace hook:
