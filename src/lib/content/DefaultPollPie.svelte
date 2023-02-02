@@ -6,7 +6,7 @@
   import { Chart, PieController, ArcElement, Tooltip, Legend } from "chart.js";
   Chart.register(PieController, ArcElement, Tooltip, Legend);
 
-  import ChartSpoilerCover from "../elements/ChartSpoilerCover.svelte";
+  import SpoilerBlock from "../elements/SpoilerBlock.svelte";
 
   let canvas = null, chart = null;
   $: if (chart) {
@@ -67,15 +67,11 @@
     width: 100%;
     height: 100%;
   }
-  .spoiler {
-    filter: blur(4px);
-  }
 </style>
 
 <!--content-->
 <div class="main">
-  <canvas bind:this={canvas} class:spoiler={$settings.hideVotes}></canvas>
-  {#if $settings.hideVotes}
-  <ChartSpoilerCover />
-  {/if}
+  <SpoilerBlock hide={$settings.hideVotes}>
+    <canvas bind:this={canvas}></canvas>
+  </SpoilerBlock>
 </div>

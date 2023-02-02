@@ -5,7 +5,7 @@
   import { tippy } from "../utils/tippy";
 	import UserImage from "./UserImage.svelte";
 	import UserProfileLink from "./UserProfileLink.svelte";
-  import ChartSpoilerCover from "./ChartSpoilerCover.svelte";
+  import SpoilerBlock from "./SpoilerBlock.svelte";
 
   const imgSize = "250px";
 
@@ -51,17 +51,6 @@
   .messages div:nth-child(2n) {
     background-color: rgba(64, 64, 64, 0.2);
   }
-  .spoiler {
-    filter: blur(4px);
-  }
-  .spoiler-cover {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    width: 100%;
-    height: auto;
-  }
   .spoiler-toggle {
     background: none;
     border: 0;
@@ -101,24 +90,20 @@
         </button>
       </div>
       <div class="messages">
-        {#if $raffle.winnerMessages.length}
-          {#each $raffle.winnerMessages as message}
-            <div class:spoiler={$settings.hideMessages}>
-              {@html $raffle.winner.renderName}:
-              {@html message}
+        <SpoilerBlock text="Messages hidden" hide={$settings.hideMessages} size={80}>
+          {#if $raffle.winnerMessages.length}
+            {#each $raffle.winnerMessages as message}
+              <div>
+                {@html $raffle.winner.renderName}:
+                {@html message}
+              </div>
+            {/each}
+          {:else}
+            <div class="opacity-25 w-100 text-center">
+              New messages from winner will appear here
             </div>
-          {/each}
-        {:else}
-          <div class="opacity-25 w-100 text-center" class:spoiler={$settings.hideMessages}>
-            New messages from winner will appear here
-          </div>
-        {/if}
-
-        {#if $settings.hideMessages}
-          <div class="spoiler-cover">
-            <ChartSpoilerCover spoilerCaption="Messages hidden" scale={0.5} />
-          </div>
-        {/if}
+          {/if}
+        </SpoilerBlock>
       </div>
     </div>
   </div>

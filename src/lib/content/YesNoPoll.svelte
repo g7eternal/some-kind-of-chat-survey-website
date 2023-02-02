@@ -1,7 +1,7 @@
 <script>
   import { settings } from "../utils/stores";
   import { yesNoPoll as poll } from "$lib/utils/yes_no.js";
-  import ChartSpoilerCover from "../elements/ChartSpoilerCover.svelte";
+  import SpoilerBlock from "../elements/SpoilerBlock.svelte";
   import YesNoFloater from "../elements/YesNoFloater.svelte";
 
   const motto = `Type YES or NO in chat to vote`;
@@ -67,17 +67,17 @@
       placeholder="What are we voting for?">
   </div>
 
-  <div class="variants">
-    <YesNoFloater text={"YEA"} 
-      count={yesScore} scale={yesScale} />
-    <YesNoFloater text={"NAY"} 
-      count={noScore} scale={noScale} />
-  </div>
+  <SpoilerBlock blur={false} hide={$settings.hideVotes}>
+    <div class="variants">
+      <YesNoFloater text={"YEA"} 
+        count={yesScore} scale={yesScale} />
+      <YesNoFloater text={"NAY"} 
+        count={noScore} scale={noScale} />
+    </div>
+  </SpoilerBlock>
+
   <div class="motto" class:text-primary-emphasis={$poll.allowVote}>
     {$poll.allowVote ? motto : "Awaiting for the vote to start"}
   </div>
 
-  {#if $settings.hideVotes}
-    <ChartSpoilerCover spoilerCaption="" />
-  {/if}
 </div>

@@ -6,7 +6,7 @@
   import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
   Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
   
-  import ChartSpoilerCover from "../elements/ChartSpoilerCover.svelte";
+  import SpoilerBlock from "../elements/SpoilerBlock.svelte";
 
   let canvas = null, chart = null;
   $: if (chart) {
@@ -92,15 +92,11 @@
     max-width: 100%;
     max-height: 100%;
   }
-  .spoiler {
-    filter: blur(4px);
-  }
 </style>
 
 <!--content-->
 <div class="main">
-  <canvas bind:this={canvas} class:spoiler={$settings.hideVotes}></canvas>
-  {#if $settings.hideVotes}
-    <ChartSpoilerCover />
-  {/if}
+  <SpoilerBlock hide={$settings.hideVotes}>
+    <canvas bind:this={canvas}></canvas>
+  </SpoilerBlock>
 </div>
