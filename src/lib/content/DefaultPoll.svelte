@@ -1,13 +1,13 @@
 <script>
   import { browser } from "$app/environment";
-  import { TabContent, TabPane } from 'sveltestrap';
+  import { TabContent, TabPane } from "sveltestrap";
   import DefaultPollChart from "./DefaultPollChart.svelte";
   import DefaultPollPie from "./DefaultPollPie.svelte";
   import DefaultPollTable from "./DefaultPollTable.svelte";
 
   let showCaptions = false;
-  function toggleCaptions () {
-    showCaptions = (window.innerWidth > window.innerHeight) && (window.innerWidth > 800);
+  function toggleCaptions() {
+    showCaptions = window.innerWidth > window.innerHeight && window.innerWidth > 800;
   }
   if (browser) toggleCaptions();
 </script>
@@ -15,16 +15,15 @@
 <svelte:window on:resize={toggleCaptions} />
 <!-- content -->
 <TabContent>
-
   {#if showCaptions}
-  <TabPane tabId="caption" disabled>
-    <span slot="tab"> View mode: </span>
-  </TabPane>
+    <TabPane tabId="caption" disabled>
+      <span slot="tab"> View mode: </span>
+    </TabPane>
   {/if}
 
   <TabPane tabId="dataTable" active>
     <span slot="tab" class="text-success-emphasis">
-      <span class='material-icons'>&#xe241;</span>
+      <span class="material-icons">&#xe241;</span>
       {#if showCaptions}
         Table
       {/if}
@@ -34,7 +33,7 @@
   </TabPane>
   <TabPane tabId="dataChart">
     <span slot="tab" class="text-success-emphasis">
-      <span class='material-icons'>&#xf20c;</span>
+      <span class="material-icons">&#xf20c;</span>
       {#if showCaptions}
         Graph
       {/if}
@@ -45,7 +44,7 @@
 
   <TabPane tabId="dataPieChart">
     <span slot="tab" class="text-success-emphasis">
-      <span class='material-icons'>&#xe1af;</span>
+      <span class="material-icons">&#xe1af;</span>
       {#if showCaptions}
         Chart
       {/if}
@@ -53,5 +52,4 @@
 
     <DefaultPollPie />
   </TabPane>
-
 </TabContent>

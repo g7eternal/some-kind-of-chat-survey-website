@@ -1,25 +1,31 @@
 <script>
   import TwitchButton from "./elements/TwitchButton.svelte";
-  import {tippy} from "./utils/tippy.js";
+  import { tippy } from "./utils/tippy.js";
 </script>
-
-<style>
-  
-</style>
 
 <nav class="navbar navbar-expand bg-body-tertiary py-1">
   <div class="container-fluid px-1">
     <a class="navbar-brand mx-2" href=".">
-      <img src="favicon.png" alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
+      <img
+        src="favicon.png"
+        alt="Logo"
+        width="24"
+        height="24"
+        class="d-inline-block align-text-top"
+      />
       not chat.vote
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto my-2 my-lg-0 align-text-bottom">
         <li class="nav-item">
-          <a class="nav-link" href="https://chat.vote/" rel="noreferrer noopener" 
-          use:tippy={{
-            content: "Visit the original <b>chat.vote</b> site"
-          }} >
+          <a
+            class="nav-link"
+            href="https://chat.vote/"
+            rel="noreferrer noopener"
+            use:tippy={{
+              content: "Visit the original <b>chat.vote</b> site",
+            }}
+          >
             actual chat.vote
           </a>
         </li>
@@ -30,3 +36,6 @@
     </div>
   </div>
 </nav>
+
+<style>
+</style>

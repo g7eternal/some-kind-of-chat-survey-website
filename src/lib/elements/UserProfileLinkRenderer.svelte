@@ -5,13 +5,9 @@
 </script>
 
 {#if row.username.includes("~")}
-
   {@html row.renderName}
-
 {:else}
-
-<UserProfileLink user={row.username}>
-  {@html row.renderName}
-</UserProfileLink>
-
+  <UserProfileLink user={row.username}>
+    {@html row.renderName}
+  </UserProfileLink>
 {/if}

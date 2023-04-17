@@ -9,15 +9,41 @@
 
   let startDrawing = false;
 
-  function getWinner () {
+  function getWinner() {
     startDrawing = true;
   }
 
-  function clearWinner () {
+  function clearWinner() {
     $raffle.acknowledgeWinner();
     startDrawing = false;
   }
 </script>
+
+<!--content-->
+<button
+  class="btn btn-primary w-100 text-start my-2"
+  disabled={$raffle.entrants.size < 1}
+  use:tippy={{ placement: "left", content: "Starts the winner draft" }}
+  on:click={getWinner}
+>
+  <span class="material-icons">&#xea3f;</span>
+  {#if !mini}
+    {#if $raffle.winner}
+      Draw another winner
+    {:else}
+      Draw a winner
+    {/if}
+  {/if}
+</button>
+
+<RaffleHistory {mini} />
+
+<!-- celebratory block -->
+{#if startDrawing}
+  <div class="animator" transition:scale={{ duration: 200 }}>
+    <RaffleAnimation on:drawn={clearWinner} />
+  </div>
+{/if}
 
 <style>
   button {
@@ -34,27 +60,3 @@
     background: rgba(16, 16, 16, 0.69);
   }
 </style>
-
-<!--content-->
-<button class="btn btn-primary w-100 text-start my-2"
-  disabled={$raffle.entrants.size < 1}
-  use:tippy={{placement: "left", content: "Starts the winner draft"}}
-  on:click={getWinner}>
-  <span class="material-icons">&#xea3f;</span>
-  {#if !mini}
-    {#if $raffle.winner}
-      Draw another winner
-    {:else}
-      Draw a winner
-    {/if}
-  {/if}
-</button>
-
-<RaffleHistory {mini} />
-
-<!-- celebratory block -->
-{#if startDrawing}
-<div class="animator" transition:scale={{duration:200}}>
-  <RaffleAnimation on:drawn={clearWinner} />
-</div>
-{/if}

@@ -2,43 +2,42 @@ import { writable } from "svelte/store";
 import { raffle } from "./raffle";
 
 class PersistentTimer {
-  constructor (bindToAnything=null) {
+  constructor(bindToAnything = null) {
     this.render = writable("00:00");
     this.start = Date.now();
 
     this.boundTo = bindToAnything;
 
     this.interval = setInterval(() => {
-      const diff = Math.floor((Date.now() - this.start)/1000);
-      const mm = Math.floor(diff/60);
-      const ss = diff%60;
-      this.render.update(() => String(mm).padStart(2,'0') + ":" + String(ss).padStart(2,'0'));
+      const diff = Math.floor((Date.now() - this.start) / 1000);
+      const mm = Math.floor(diff / 60);
+      const ss = diff % 60;
+      this.render.update(() => String(mm).padStart(2, "0") + ":" + String(ss).padStart(2, "0"));
     }, 1000);
   }
 
-  rebind (anything) {
+  rebind(anything) {
     this.boundTo = anything;
     return this;
   }
 
-  reset () {
+  reset() {
     this.start = Date.now();
     this.render.update(() => "00:00");
     return this;
   }
 
-  checkBinding (anything) {
+  checkBinding(anything) {
     return anything === this.boundTo;
   }
 
-  destroy () {
+  destroy() {
     clearInterval(this.interval);
   }
-
 }
 
 const raffleTimerEntity = new PersistentTimer();
-raffle.subscribe(v => {
+raffle.subscribe((v) => {
   if (!raffleTimerEntity.checkBinding(v.winner)) {
     raffleTimerEntity.rebind(v.winner).reset();
   }

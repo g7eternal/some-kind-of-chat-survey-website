@@ -1,4 +1,4 @@
-import { browser } from '$app/environment' // sveltekit environment 
+import { browser } from "$app/environment"; // sveltekit environment
 import { writable } from "svelte/store";
 import { showAdviceFriend } from "./adviceFriend";
 
@@ -36,7 +36,8 @@ try {
   baseSettings = Object.assign(baseSettings, storedSettings);
 } catch (e) {
   console.warn("Failed to parse stored settings", e);
-} finally { // various function which depend on being run after settings loaded
+} finally {
+  // various function which depend on being run after settings loaded
   settings.set(baseSettings);
   // check if user is a first timer:
   if (baseSettings.firstVisit) {
@@ -50,7 +51,7 @@ try {
 }
 
 // automatically store settings
-settings.subscribe(v => {
+settings.subscribe((v) => {
   // store into localstorage
   if (browser) localStorage.setItem(lsKey_Settings, JSON.stringify(v));
 });

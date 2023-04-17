@@ -3,18 +3,27 @@
   import { settings } from "$lib/utils/stores.js";
   import { poll } from "$lib/utils/poll.js";
 
-  import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+  import {
+    Chart,
+    BarController,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+    Tooltip,
+    Legend,
+  } from "chart.js";
   Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-  
+
   import SpoilerBlock from "../elements/SpoilerBlock.svelte";
 
-  let canvas = null, chart = null;
+  let canvas = null,
+    chart = null;
   $: if (chart) {
-    const entries = Array.from($poll.entries.values()).sort((a,b) => (b.score - a.score));
-    chart.data.labels = entries.map(e => [`${$settings.voteCommand} ${e.id}`, e.text]);
-    chart.data.datasets[0].data = entries.map(e => e.score);
-    chart.data.datasets[0].backgroundColor = entries.map(e => e.bgcolor);
-    chart.data.datasets[0].borderColor = entries.map(e => e.bordercolor);
+    const entries = Array.from($poll.entries.values()).sort((a, b) => b.score - a.score);
+    chart.data.labels = entries.map((e) => [`${$settings.voteCommand} ${e.id}`, e.text]);
+    chart.data.datasets[0].data = entries.map((e) => e.score);
+    chart.data.datasets[0].backgroundColor = entries.map((e) => e.bgcolor);
+    chart.data.datasets[0].borderColor = entries.map((e) => e.bordercolor);
     chart.update();
   }
 
@@ -24,26 +33,26 @@
       options: {
         animation: {
           duration: 200,
-          easing: 'easeInCubic',
+          easing: "easeInCubic",
           delay: 0,
-          loop: false
+          loop: false,
         },
-        indexAxis: 'y',
+        indexAxis: "y",
         scales: {
           x: {
-            axis: 'x',
+            axis: "x",
             ticks: {
               color: "white",
             },
             beginAtZero: true,
           },
           y: {
-            axis: 'y',
+            axis: "y",
             ticks: {
               textStrokeColor: "rgba(0,0,0,1)",
               textStrokeWidth: 3,
               font: () => ({
-                size: Math.round(18*window.innerHeight/1000)
+                size: Math.round((18 * window.innerHeight) / 1000),
               }),
               color: "white",
               mirror: true,
@@ -54,31 +63,38 @@
         },
         plugins: {
           legend: {
-            display: false
+            display: false,
           },
           tooltip: {
-            enabled: false
-          }
-        }
+            enabled: false,
+          },
+        },
       },
       data: {
         labels: [],
         datasets: [
           {
-            label: 'Votes',
+            label: "Votes",
             data: [],
             backgroundColor: [],
             borderWidth: 2,
             borderColor: [],
           },
         ],
-      }
+      },
     });
     return () => {
       chart?.destroy();
     };
-  })
+  });
 </script>
+
+<!--content-->
+<div class="main">
+  <SpoilerBlock hide={$settings.hideVotes}>
+    <canvas bind:this={canvas} />
+  </SpoilerBlock>
+</div>
 
 <style>
   .main {
@@ -93,10 +109,3 @@
     max-height: 100%;
   }
 </style>
-
-<!--content-->
-<div class="main">
-  <SpoilerBlock hide={$settings.hideVotes}>
-    <canvas bind:this={canvas}></canvas>
-  </SpoilerBlock>
-</div>

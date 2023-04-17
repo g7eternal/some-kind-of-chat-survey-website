@@ -9,16 +9,18 @@
 
   const voteHelper = {
     placement: "right",
-    content: "<h3>Vote command</h3>Vote message must start with this text", 
+    content: "<h3>Vote command</h3>Vote message must start with this text",
   };
 
-  function doValidation () {
+  function doValidation() {
     if ($settings.suggestCommand === $settings.voteCommand) {
-      showAdviceFriend("Your <b>vote</b> and <b>suggest</b> commands are identical! This will not work well.");
+      showAdviceFriend(
+        "Your <b>vote</b> and <b>suggest</b> commands are identical! This will not work well."
+      );
     }
   }
 
-  function startVoting () {
+  function startVoting() {
     try {
       $poll.startVoting();
     } catch (e) {
@@ -27,7 +29,7 @@
   }
 
   let lastWinner = null;
-  function stopVoting () {
+  function stopVoting() {
     try {
       const winner = $poll.startVoting().getWinner();
       console.info("The winner is:", winner);
@@ -38,18 +40,68 @@
     }
   }
 
-  function toggleVoting () {
+  function toggleVoting() {
     if ($poll.allowVote) stopVoting();
     else startVoting();
   }
 
-  function clearLastWinner () {
+  function clearLastWinner() {
     lastWinner = null;
   }
 </script>
 
+<!--content-->
+
+<button
+  class="btn w-100 text-start"
+  class:btn-danger={$poll.allowVote}
+  class:btn-success={!$poll.allowVote}
+  class:button-in-block={$poll.type === "poll" && !mini}
+  use:tippy={{
+    placement: "left",
+    content: $poll.allowVote ? "Ends current poll and shows the winner" : "Starts the poll",
+  }}
+  on:click={toggleVoting}
+>
+  {#if $poll.allowVote}
+    <span class="material-icons">&#xe801;</span>
+    {#if !mini}
+      <b>Stop and show winner</b>
+    {/if}
+  {:else}
+    <span class="material-icons">&#xe801;</span>
+    {#if !mini}
+      <b>Start voting</b>
+    {/if}
+  {/if}
+</button>
+
+{#if $poll.type === "poll" && !mini}
+  <div class="input-group">
+    <span class="input-group-text material-icons helper px-1" use:tippy={voteHelper}>
+      &#xe88e;
+    </span>
+    <input
+      type="text"
+      class="form-control bottom-left"
+      disabled={$poll.allowVote}
+      class:invalid={$settings.suggestCommand === $settings.voteCommand}
+      on:change={doValidation}
+      placeholder="Command"
+      aria-label="Vote command"
+      bind:value={$settings.voteCommand}
+    />
+  </div>
+{/if}
+
+<!-- celebratory block -->
+{#if lastWinner}
+  <WinnerModal winner={lastWinner} html={true} on:toggle={clearLastWinner} />
+{/if}
+
 <style>
-  button, input {
+  button,
+  input {
     font-size: inherit;
   }
   .button-in-block {
@@ -67,47 +119,3 @@
     box-shadow: 0px 0px 4px rgba(255, 0, 0, 0.7);
   }
 </style>
-
-<!--content-->
-
-<button 
-  class="btn w-100 text-start" 
-  class:btn-danger={$poll.allowVote}
-  class:btn-success={!$poll.allowVote}
-  class:button-in-block={$poll.type === "poll" && !mini}
-  use:tippy={{placement: "left", content: (
-    $poll.allowVote ? 
-    "Ends current poll and shows the winner" :
-    "Starts the poll"
-  )}}
-  on:click={toggleVoting} >
-  {#if $poll.allowVote}
-    <span class="material-icons">&#xe801;</span>
-    {#if !mini}
-      <b>Stop and show winner</b>
-    {/if}
-  {:else}
-    <span class="material-icons">&#xe801;</span>
-    {#if !mini}
-      <b>Start voting</b>
-    {/if}
-  {/if}
-</button>
-
-{#if $poll.type === "poll" && !mini}
-  <div class="input-group">
-    <span class="input-group-text material-icons helper px-1"
-      use:tippy={voteHelper}>
-      &#xe88e;
-    </span>
-    <input type="text" class="form-control bottom-left" disabled={$poll.allowVote}
-      class:invalid={$settings.suggestCommand === $settings.voteCommand}
-      on:change={doValidation}
-      placeholder="Command" aria-label="Vote command" bind:value={$settings.voteCommand}>
-  </div>
-{/if}
-
-<!-- celebratory block -->
-{#if lastWinner}
-  <WinnerModal winner={lastWinner} html={true} on:toggle={clearLastWinner} />
-{/if}

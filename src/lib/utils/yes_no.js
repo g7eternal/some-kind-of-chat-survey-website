@@ -2,29 +2,26 @@ import { writable } from "svelte/store";
 import { Poll } from "./poll";
 import { addHook, removeHook } from "./chat";
 
-const YES = "YEA", NO = "NAY";
+const YES = "YEA",
+  NO = "NAY";
 
-const yes = ["yes", "voteyea"]; yes.push(YES.toLowerCase()); 
-const no  = [ "no", "votenay"]; no.push(NO.toLowerCase());
+const yes = ["yes", "voteyea"];
+yes.push(YES.toLowerCase());
+const no = ["no", "votenay"];
+no.push(NO.toLowerCase());
 
 class YesNoPoll extends Poll {
-  constructor (...args) {
+  constructor(...args) {
     super("yes-no", ...args);
 
     // add two entries:
-    const y = this.addEntry(
-      { "render-name": "" },
-      YES
-    );
+    const y = this.addEntry({ "render-name": "" }, YES);
     this.entries.delete(y.id);
     y.id = YES;
     y.renderText = `<div class="tw-circle voteyea">${YES}</div>`;
     this.entries.set(y.id, y);
-    
-    const n = this.addEntry(
-      { "render-name": "" },
-      NO
-    );
+
+    const n = this.addEntry({ "render-name": "" }, NO);
     this.entries.delete(n.id);
     n.id = NO;
     n.renderText = `<div class="tw-circle votenay">${NO}</div>`;
@@ -38,12 +35,12 @@ class YesNoPoll extends Poll {
         if (this.voters.has(tags.username)) return;
         let voted = false;
 
-        if (yes.some(matcher => lcase.includes(matcher))) {
+        if (yes.some((matcher) => lcase.includes(matcher))) {
           const entry = this.entries.get(YES);
           entry.incScore(1);
           voted = true;
         }
-        if (no.some(matcher => lcase.includes(matcher))) {
+        if (no.some((matcher) => lcase.includes(matcher))) {
           const entry = this.entries.get(NO);
           entry.incScore(1);
           voted = true;
@@ -60,12 +57,12 @@ class YesNoPoll extends Poll {
     addHook(this._hook);
   }
 
-  startVoting () {
+  startVoting() {
     super.startVoting(true);
     triggerPollReactivity();
     return this;
   }
-  stopVoting () {
+  stopVoting() {
     super.stopVoting();
     triggerPollReactivity();
     return this;
@@ -75,6 +72,6 @@ class YesNoPoll extends Poll {
 const yesNoPollEntity = new YesNoPoll();
 export const yesNoPoll = writable(yesNoPollEntity);
 
-function triggerPollReactivity () { 
+function triggerPollReactivity() {
   yesNoPoll.set(yesNoPollEntity);
 }

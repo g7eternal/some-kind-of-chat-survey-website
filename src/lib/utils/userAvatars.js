@@ -4,7 +4,7 @@ const avatars = new Map();
 const unknown = [];
 
 let twitch = null;
-auth.subscribe(a => {
+auth.subscribe((a) => {
   twitch = a;
 });
 
@@ -12,13 +12,12 @@ let fetchTimer = null;
 const rateLimit = {
   remaining: 1e3,
   reset: 0,
-  heartbeat: 500  // how often will we be polling
+  heartbeat: 500, // how often will we be polling
 };
 
-export function getAvatar (username) {
+export function getAvatar(username) {
   return new Promise((resolve, reject) => {
     try {
-      
       const knownAvatar = avatars.get(username);
       if (knownAvatar) return resolve(knownAvatar);
 
@@ -32,15 +31,13 @@ export function getAvatar (username) {
           resolve(avatars.get(username));
         }
       }, rateLimit.heartbeat);
-
     } catch (e) {
       reject(e);
     }
   });
 }
 
-
-async function requestSomeAvatarsFromTwitch () {
+async function requestSomeAvatarsFromTwitch() {
   if (unknown.length < 1) {
     fetchTimer = null;
     return;
@@ -55,18 +52,15 @@ async function requestSomeAvatarsFromTwitch () {
     while (unknown.length && candidates.length < 99) {
       candidates.push("login=" + encodeURIComponent(unknown.pop()));
     }
-    
+
     try {
-      const resp = await window.fetch(
-        "https://api.twitch.tv/helix/users?" + candidates.join("&"),
-        {
-          headers: {
-            "Client-Id": token,
-            "Authorization": "Bearer " + twitch.token
-          },
-          method: "GET"
-        }
-      );
+      const resp = await window.fetch("https://api.twitch.tv/helix/users?" + candidates.join("&"), {
+        headers: {
+          "Client-Id": token,
+          Authorization: "Bearer " + twitch.token,
+        },
+        method: "GET",
+      });
 
       if (resp.headers["Ratelimit-Remaining"]) {
         rateLimit.remaining = parseInt(response.headers["Ratelimit-Remaining"], 10);
@@ -81,10 +75,9 @@ async function requestSomeAvatarsFromTwitch () {
         throw new Error("Avatars: No data");
       }
 
-      response.data.forEach(user => {
+      response.data.forEach((user) => {
         avatars.set(user.login, user.profile_image_url);
       });
-
     } catch (e) {
       console.warn("Failed to fetch avatars", e);
       rateLimit.remaining = Math.max(1, rateLimit.remaining); // todo: the limit is probably not affected if fetch didn't reach twitch servers

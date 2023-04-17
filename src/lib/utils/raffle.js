@@ -5,7 +5,7 @@ import { getAvatar } from "./userAvatars";
 import { parseMessage } from "./misc";
 
 class Raffle extends Poll {
-  constructor (...args) {
+  constructor(...args) {
     super("raffle", ...args);
 
     this.nextWinner = null;
@@ -39,42 +39,42 @@ class Raffle extends Poll {
         this.entries.set(tags.username, newEntry);
 
         // pre-cache user image
-        getAvatar(tags.username).then(link => {
+        getAvatar(tags.username).then((link) => {
           newEntry.imageCached = new Image();
           newEntry.imageCached.src = link;
         });
-        
+
         triggerPollReactivity();
       }
     };
     addHook(this._hook);
   }
 
-  startVoting () {
+  startVoting() {
     super.startVoting(true);
     triggerPollReactivity();
     return this;
   }
-  stopVoting () {
+  stopVoting() {
     super.stopVoting();
     triggerPollReactivity();
     return this;
   }
 
-  allowEntering () {
+  allowEntering() {
     return this.startVoting();
   }
-  blockEntering () {
+  blockEntering() {
     return this.stopVoting();
   }
 
-  removeUser (username) {
+  removeUser(username) {
     const result = this.entrants.delete(username);
     this.entries.delete(username);
     triggerPollReactivity();
     return result;
   }
-  reset () {
+  reset() {
     this.nextWinner = null;
     this.winnerCount = 0;
     this.winnerHistory.clear();
@@ -82,11 +82,12 @@ class Raffle extends Poll {
     return super.reset();
   }
 
-  getWinner (winner) {
-    if (!winner) { // may be passed by RaffleAnimation result function
+  getWinner(winner) {
+    if (!winner) {
+      // may be passed by RaffleAnimation result function
       const userPool = Array.from(this.entrants.values());
-      const winnerIndex = Math.floor(Math.random()*userPool.length);
-      
+      const winnerIndex = Math.floor(Math.random() * userPool.length);
+
       winner = userPool[winnerIndex] || null;
     }
 
@@ -101,7 +102,7 @@ class Raffle extends Poll {
     triggerPollReactivity();
     return this.nextWinner;
   }
-  acknowledgeWinner () {
+  acknowledgeWinner() {
     this.winner = this.nextWinner;
     if (this.winner) this.winner.winOrder = ++this.winnerCount;
     this.winnerHistory.set(this.winnerCount, this.winner);
@@ -117,6 +118,6 @@ class Raffle extends Poll {
 const raffleEntity = new Raffle();
 export const raffle = writable(raffleEntity);
 
-function triggerPollReactivity () { 
+function triggerPollReactivity() {
   raffle.set(raffleEntity);
 }

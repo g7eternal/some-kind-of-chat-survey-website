@@ -1,4 +1,4 @@
-import { browser } from '$app/environment' // sveltekit environment 
+import { browser } from "$app/environment"; // sveltekit environment
 import { writable } from "svelte/store";
 
 import { setChannel } from "./chat";
@@ -6,7 +6,7 @@ import { setChannel } from "./chat";
 export const twitchAppClientId = "h7vpg61dku6gdqpy2oefic8glbhzps"; // should this be stored in public git?
 
 class CSRFToken {
-  constructor () {
+  constructor() {
     this.key = "not-chat-vote.csrf";
     this.token = "token";
 
@@ -15,18 +15,17 @@ class CSRFToken {
     }
   }
 
-  generateNewToken () {
+  generateNewToken() {
     this.token = String(Math.random()).slice(2).padEnd(10, "0");
     localStorage.setItem(this.key, this.token);
     return this.token;
   }
 
-  checkToken (t) {
+  checkToken(t) {
     return t === this.token;
   }
 }
 export const requestToken = new CSRFToken();
-
 
 export const auth = writable({});
 const lsKey_auth = "not-chat-vote.twitch";
@@ -37,7 +36,7 @@ let baseAuth = {
   type: null,
   scope: null,
   busy: true,
-  valid: false
+  valid: false,
 };
 
 try {
@@ -47,60 +46,67 @@ try {
   baseAuth.valid = false; // we must revalidate the token!
 } catch (e) {
   console.warn("Failed to parse stored settings", e);
-} finally { // various function which depend on being run after settings loaded
+} finally {
+  // various function which depend on being run after settings loaded
   auth.set(baseAuth);
   // automatically store settings:
-  auth.subscribe(v => {
+  auth.subscribe((v) => {
     // store into localstorage
     if (browser) localStorage.setItem(lsKey_auth, JSON.stringify(v));
   });
 }
 
 // token validation
-export function doTokenValidation () {
+export function doTokenValidation() {
   if (!browser || !baseAuth.token) return;
 
-  auth.update(a => {
+  auth.update((a) => {
     a.busy = true;
     return a;
   });
-  
-  window.fetch("https://id.twitch.tv/oauth2/validate", {
-    headers: {
-      "Authorization": "OAuth " + baseAuth.token
-    },
-    method: "GET"
-  }).then(r => r.json()).then(data => {
-    baseAuth.channel = data.login;
-    baseAuth.user_id = data.user_id;
-    baseAuth.expires = data.expires_in;
-    baseAuth.valid = true;
-  }).catch(err => {
-    console.error("Token validation failed", err);
-    baseAuth.channel = "";
-    delete baseAuth.user_id;
-    baseAuth.valid = false;
-  }).finally(() => {
-    baseAuth.busy = false;
-    setChannel(baseAuth.channel, baseAuth.valid);
-    auth.set(baseAuth); // trigger reactivity
-  });
+
+  window
+    .fetch("https://id.twitch.tv/oauth2/validate", {
+      headers: {
+        Authorization: "OAuth " + baseAuth.token,
+      },
+      method: "GET",
+    })
+    .then((r) => r.json())
+    .then((data) => {
+      baseAuth.channel = data.login;
+      baseAuth.user_id = data.user_id;
+      baseAuth.expires = data.expires_in;
+      baseAuth.valid = true;
+    })
+    .catch((err) => {
+      console.error("Token validation failed", err);
+      baseAuth.channel = "";
+      delete baseAuth.user_id;
+      baseAuth.valid = false;
+    })
+    .finally(() => {
+      baseAuth.busy = false;
+      setChannel(baseAuth.channel, baseAuth.valid);
+      auth.set(baseAuth); // trigger reactivity
+    });
 }
 
-export function doUserAuth (token) {
+export function doUserAuth(token) {
   if (!browser) return;
 
   baseAuth.token = token;
-  if (!token) { // token validation will pass through with no actual work
+  if (!token) {
+    // token validation will pass through with no actual work
     baseAuth.valid = false;
     auth.set(baseAuth); // trigger reactivity
   }
   return doTokenValidation();
 }
 
-export function initTwitch () {
+export function initTwitch() {
   if (!baseAuth.token) {
-    auth.update(a => {
+    auth.update((a) => {
       a.busy = false;
       return a;
     });

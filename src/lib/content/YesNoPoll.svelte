@@ -7,15 +7,43 @@
   const motto = `Type YES or NO in chat to vote`;
   let question = "";
 
-  let yesScale=1, noScale=1, yesScore=0, noScore=0;
+  let yesScale = 1,
+    noScale = 1,
+    yesScore = 0,
+    noScore = 0;
   $: {
     yesScore = $poll.entries.get("YEA")?.score || 0;
     noScore = $poll.entries.get("NAY")?.score || 0;
 
-    yesScale = Math.min(2, Math.max(0.5, (1 + yesScore)/(1 + noScore)));
-    noScale = 1/yesScale;
+    yesScale = Math.min(2, Math.max(0.5, (1 + yesScore) / (1 + noScore)));
+    noScale = 1 / yesScale;
   }
 </script>
+
+<!-- content -->
+
+<div class="outer">
+  <div class="input-group my-2 px-1 question">
+    <input
+      type="text"
+      class="form-control fs-2 text-center border-warning-subtle"
+      bind:value={question}
+      class:fake-input={question.length > 0}
+      placeholder="What are we voting for?"
+    />
+  </div>
+
+  <SpoilerBlock blur={false} hide={$settings.hideVotes}>
+    <div class="variants">
+      <YesNoFloater text={"YEA"} count={yesScore} scale={yesScale} />
+      <YesNoFloater text={"NAY"} count={noScore} scale={noScale} />
+    </div>
+  </SpoilerBlock>
+
+  <div class="motto" class:text-primary-emphasis={$poll.allowVote}>
+    {$poll.allowVote ? motto : "Awaiting for the vote to start"}
+  </div>
+</div>
 
 <style>
   .outer {
@@ -58,28 +86,3 @@
     font-weight: bold;
   }
 </style>
-
-<!-- content -->
-
-<div class="outer">
-
-  <div class="input-group my-2 px-1 question">
-    <input type="text" class="form-control fs-2 text-center border-warning-subtle" 
-      bind:value={question} class:fake-input={question.length > 0}
-      placeholder="What are we voting for?">
-  </div>
-
-  <SpoilerBlock blur={false} hide={$settings.hideVotes}>
-    <div class="variants">
-      <YesNoFloater text={"YEA"} 
-        count={yesScore} scale={yesScale} />
-      <YesNoFloater text={"NAY"} 
-        count={noScore} scale={noScale} />
-    </div>
-  </SpoilerBlock>
-
-  <div class="motto" class:text-primary-emphasis={$poll.allowVote}>
-    {$poll.allowVote ? motto : "Awaiting for the vote to start"}
-  </div>
-
-</div>

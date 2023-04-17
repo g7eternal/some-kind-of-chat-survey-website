@@ -5,6 +5,19 @@
   export let size = 160;
 </script>
 
+<div class="main">
+  <div class="inner" class:spoiler-cover={hide && blur}>
+    <slot />
+  </div>
+
+  {#if hide}
+    <div class="spoiler">
+      <span class="material-icons" style:font-size={size + "px"}> &#xe8f5; </span>
+      <h1>{text}</h1>
+    </div>
+  {/if}
+</div>
+
 <style>
   .main {
     position: relative;
@@ -44,20 +57,3 @@
     filter: blur(4px);
   }
 </style>
-
-<div class="main">
-
-  <div class="inner" class:spoiler-cover={hide && blur}>
-    <slot></slot>
-  </div>
-
-  {#if hide}
-    <div class="spoiler">
-      <span class="material-icons" style:font-size={size + "px"}>
-        &#xe8f5;
-      </span>
-      <h1>{text}</h1>
-    </div>
-  {/if}
-
-</div>

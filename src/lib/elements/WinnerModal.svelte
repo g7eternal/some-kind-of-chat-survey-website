@@ -1,19 +1,58 @@
 <script>
-  import { Modal } from 'sveltestrap';
-  import { Confetti } from "svelte-confetti"
+  import { Modal } from "sveltestrap";
+  import { Confetti } from "svelte-confetti";
   import { createEventDispatcher } from "svelte";
-	import UserProfileLink from "./UserProfileLink.svelte";
+  import UserProfileLink from "./UserProfileLink.svelte";
 
-  export let winner = null, html = false;
+  export let winner = null,
+    html = false;
 
   const dispatch = createEventDispatcher();
 
   let open = true;
-  function toggle () {
+  function toggle() {
     open = !open;
     dispatch("toggle", open);
   }
 </script>
+
+{#if winner}
+  <Modal body header="The winner is:" isOpen={open} {toggle} centered={true}>
+    <div class="winner">
+      {#if html}
+        {@html winner.renderText || "???"}
+      {:else}
+        {winner.text || "???"}
+      {/if}
+    </div>
+
+    {#if winner.author}
+      <div class="author">
+        <span class="text-secondary">Suggested by:</span>
+        <UserProfileLink user={winner.username}>
+          {@html winner.renderName}
+        </UserProfileLink>
+      </div>
+    {/if}
+  </Modal>
+
+  <!-- confetti -->
+  {#if open}
+    <div class="confetti">
+      <Confetti
+        x={[-5, 5]}
+        y={[0, 0.1]}
+        delay={[0, 2000]}
+        colorArray={["yellow", "lime", "green", "yellow"]}
+        size="12"
+        infinite
+        duration="5000"
+        amount="555"
+        fallDistance="100vh"
+      />
+    </div>
+  {/if}
+{/if}
 
 <style>
   .winner {
@@ -60,36 +99,3 @@
     background-color: darkred;
   }
 </style>
-
-{#if winner}
-
-  <Modal body header="The winner is:" isOpen={open} {toggle} centered={true}>
-    <div class="winner">
-      {#if html}
-        {@html winner.renderText || "???"}
-      {:else}
-        {winner.text || "???"}
-      {/if}
-    </div>
-
-    {#if winner.author}
-    <div class="author">
-      <span class="text-secondary">Suggested by:</span>
-      <UserProfileLink user={winner.username}>
-        {@html winner.renderName}
-      </UserProfileLink>
-    </div>
-    {/if}
-  </Modal>
-
-  <!-- confetti -->
-  {#if open}
-  <div class="confetti">
-    <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[0, 2000]} 
-      colorArray={["yellow", "lime", "green", "yellow"]} size=12
-      infinite duration=5000 amount=555 fallDistance="100vh" />
-  </div>
-  {/if}
-
-{/if}
-

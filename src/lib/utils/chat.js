@@ -12,7 +12,8 @@ const client = new tmi.Client({
 client.on("connected", () => {
   console.info("<TMI> Connection established!");
   if (!channel) {
-    chat.update(c => { // show "login" button
+    chat.update((c) => {
+      // show "login" button
       c.busy = false;
       c.connected = false;
       return c;
@@ -32,7 +33,7 @@ client.on("disconnected", (reason) => {
   disconnect().then(connect);
 });
 
-client.on('message', (_channel, tags, message="") => {
+client.on("message", (_channel, tags, message = "") => {
   const lowercase = message.toLowerCase().split(/\s/);
 
   for (let i = 0; i < hooks.length; i++) {
@@ -40,9 +41,9 @@ client.on('message', (_channel, tags, message="") => {
   }
 });
 
-async function connect () {
+async function connect() {
   if (!channel) return void console.warn("<TMI> Connect refused: No channel provided");
-  chat.update(c => {
+  chat.update((c) => {
     c.channel = channel;
     c.busy = true;
     return c;
@@ -51,23 +52,24 @@ async function connect () {
   try {
     await client.join(channel);
     console.info("<TMI> Joined channel: " + channel);
-    chat.update(c => {
+    chat.update((c) => {
       c.busy = false;
       c.connected = true;
       return c;
     });
     // first time connection check:
-    settings.update(v => {
-      if (v.firstLogin) showAdviceFriend(
-        "You can start polling now.<br>Add some entries using suggestions from chat or by yourself, then click <b class='text-success-emphasis'>Start voting</b> button to proceed.",
-        "Nice!"
-      );
+    settings.update((v) => {
+      if (v.firstLogin)
+        showAdviceFriend(
+          "You can start polling now.<br>Add some entries using suggestions from chat or by yourself, then click <b class='text-success-emphasis'>Start voting</b> button to proceed.",
+          "Nice!"
+        );
       v.firstLogin = false;
       return v;
     });
   } catch (e) {
     console.warn("<TMI> Failed to join channel: " + channel, e);
-    chat.update(c => {
+    chat.update((c) => {
       c.busy = false;
       c.connected = false;
       return c;
@@ -76,9 +78,9 @@ async function connect () {
   }
 }
 
-async function disconnect (force=false) {
+async function disconnect(force = false) {
   if (!force && !channel) return void console.warn("<TMI> Disconnect refused: No channel!");
-  chat.update(c => {
+  chat.update((c) => {
     c.busy = true;
     // c.connected = true; // we actually can't be sure we are connected
     return c;
@@ -87,14 +89,14 @@ async function disconnect (force=false) {
   try {
     await client.part(channel);
     console.info("<TMI> Left channel: " + channel);
-    chat.update(c => {
+    chat.update((c) => {
       c.busy = false;
       c.connected = false;
       return c;
     });
   } catch (e) {
     console.warn("<TMI> Failed to leave channel: " + channel, e);
-    chat.update(c => {
+    chat.update((c) => {
       c.busy = false;
       // c.connected = false; // same shit as above
       return c;
@@ -103,34 +105,36 @@ async function disconnect (force=false) {
   }
 }
 
-export async function setChannel (newChannel="", doConnect=false) {
+export async function setChannel(newChannel = "", doConnect = false) {
   if (channel && doConnect) await disconnect(true);
 
   channel = newChannel;
-  settings.update(v => {
+  settings.update((v) => {
     v.channel = newChannel;
     return v;
   });
 
-  if (doConnect && channel) try {
-    await connect();
-  } catch (e) {
-    console.error("Reconnect failed", e);
-  }
+  if (doConnect && channel)
+    try {
+      await connect();
+    } catch (e) {
+      console.error("Reconnect failed", e);
+    }
 }
 
-export async function addHook (callback) {
+export async function addHook(callback) {
   hooks.push(callback);
 }
-export async function removeHook (callback) {
-  const hookIndex = hooks.findIndex(h => h === callback);
-  if (hookIndex < 0) return void console.trace("Invalid hook removal request: hook was not present!", callback);
+export async function removeHook(callback) {
+  const hookIndex = hooks.findIndex((h) => h === callback);
+  if (hookIndex < 0)
+    return void console.trace("Invalid hook removal request: hook was not present!", callback);
 
   hooks.splice(hookIndex, 1);
 }
 
-export async function initialize () {
-  return await client.connect().catch(e => {
+export async function initialize() {
+  return await client.connect().catch((e) => {
     console.error("TMI init failed", e);
     throw e;
   });

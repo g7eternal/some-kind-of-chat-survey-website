@@ -1,11 +1,11 @@
-import { browser } from '$app/environment' // sveltekit environment 
+import { browser } from "$app/environment"; // sveltekit environment
 import AdviceFriend from "$lib/elements/AdviceFriend.svelte";
 
-const nullFunction = ()=>{};
+const nullFunction = () => {};
 
-export function showAdviceFriend (content, title="", sanitize=false) {
+export function showAdviceFriend(content, title = "", sanitize = false) {
   if (!browser) return;
-  
+
   const root = document.createElement("div");
   root.classList = "fs-6 text-light";
 
@@ -22,9 +22,9 @@ export function showAdviceFriend (content, title="", sanitize=false) {
 
   const adviceFriend = new AdviceFriend({
     props: {
-      content: root
+      content: root,
     },
-    target: document.body
+    target: document.body,
   });
 
   adviceFriend.$on("hide-advice", () => {
@@ -32,9 +32,9 @@ export function showAdviceFriend (content, title="", sanitize=false) {
   });
 }
 
-export function showConfirmAdviceFriend (content, buttonText="OK", actionCallback=nullFunction) {
+export function showConfirmAdviceFriend(content, buttonText = "OK", actionCallback = nullFunction) {
   if (!browser) return;
-  
+
   const root = document.createElement("div");
   root.classList = "d-flex flex-column";
 
@@ -55,9 +55,9 @@ export function showConfirmAdviceFriend (content, buttonText="OK", actionCallbac
   const adviceFriend = new AdviceFriend({
     props: {
       interactive: true,
-      content: root
+      content: root,
     },
-    target: document.body
+    target: document.body,
   });
 
   adviceFriend.$on("hide-advice", () => {

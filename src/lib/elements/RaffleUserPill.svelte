@@ -1,15 +1,30 @@
 <script>
   import { fly } from "svelte/transition";
-	import UserProfileLink from "./UserProfileLink.svelte";
+  import UserProfileLink from "./UserProfileLink.svelte";
   import { raffle } from "$lib/utils/raffle";
   import { tippy } from "$lib/utils/tippy";
 
   export let entry;
 
-  function removeAndBlockUser () {
+  function removeAndBlockUser() {
     $raffle.removeUser(entry.username);
   }
 </script>
+
+{#key entry}
+  <div class="badge" style:border-color={entry.usercolor} in:fly={{ duration: 10.1, x: -100 }}>
+    <UserProfileLink user={entry.username}>
+      <span class="hoverable">{entry.author}</span>
+    </UserProfileLink>
+    <button
+      class="btn-closer"
+      on:click={removeAndBlockUser}
+      use:tippy={{ content: "Remove user from this raffle", delay: [350, 0] }}
+    >
+      <span class="material-icons"> &#xe14b; </span>
+    </button>
+  </div>
+{/key}
 
 <style>
   .badge {
@@ -31,7 +46,7 @@
     border: none;
     color: rgb(96, 96, 80);
     filter: none;
-    transition: filter .2s ease-out;
+    transition: filter 0.2s ease-out;
   }
   .btn-closer:hover {
     filter: brightness(2) saturate(2);
@@ -47,17 +62,3 @@
     text-decoration-color: rgb(96, 96, 80);
   }
 </style>
-
-{#key entry}
-<div class="badge" style:border-color={entry.usercolor} in:fly={{duration:10.1, x:-100}}>
-  <UserProfileLink user={entry.username}>
-    <span class="hoverable">{entry.author}</span>
-  </UserProfileLink>
-  <button class="btn-closer" on:click={removeAndBlockUser}
-    use:tippy={{content:"Remove user from this raffle", delay:[350, 0]}}>
-    <span class="material-icons">
-      &#xe14b;
-    </span>
-  </button>
-</div>
-{/key}

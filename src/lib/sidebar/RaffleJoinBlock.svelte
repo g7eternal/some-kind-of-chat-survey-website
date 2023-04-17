@@ -8,16 +8,18 @@
 
   const suggestHelper = {
     placement: "right",
-    content: "<h3>Join command</h3>People can join by typing this message", 
+    content: "<h3>Join command</h3>People can join by typing this message",
   };
 
-  function doValidation () {
+  function doValidation() {
     if (!$settings.raffleCommand) {
-      showAdviceFriend("The <b>join</b> command for your raffle is not specified. Nobody can join the raffle.");
+      showAdviceFriend(
+        "The <b>join</b> command for your raffle is not specified. Nobody can join the raffle."
+      );
     }
   }
 
-  function toggleJoining () {
+  function toggleJoining() {
     try {
       if ($poll.allowVote) {
         $poll.blockEntering();
@@ -30,8 +32,46 @@
   }
 </script>
 
+<!--content-->
+<button
+  class="btn w-100 text-start"
+  class:hasNeighbors={!mini}
+  class:btn-success={!$poll.allowVote}
+  class:btn-danger={$poll.allowVote}
+  use:tippy={{
+    placement: "left",
+    content: $poll.allowVote
+      ? "Closes the raffle and disallows joining"
+      : "Allows users to join the raffle",
+  }}
+  on:click={toggleJoining}
+>
+  <span class="material-icons">&#xe175;</span>
+  {#if !mini}
+    {$poll.allowVote ? "Close" : "Open"} raffle
+  {/if}
+</button>
+
+{#if !mini}
+  <div class="input-group">
+    <span class="input-group-text material-icons helper px-1" use:tippy={suggestHelper}>
+      &#xe88e;
+    </span>
+    <input
+      type="text"
+      class="form-control bottom-left"
+      placeholder="Command"
+      class:invalid={!$settings.raffleCommand}
+      on:change={doValidation}
+      aria-label="Suggestion command"
+      bind:value={$settings.raffleCommand}
+    />
+  </div>
+{/if}
+
 <style>
-  button, input {
+  button,
+  input {
     font-size: inherit;
   }
   .hasNeighbors {
@@ -50,33 +90,3 @@
     box-shadow: 0px 0px 8px rgba(255, 0, 0, 0.7);
   }
 </style>
-
-<!--content-->
-<button class="btn w-100 text-start"
-  class:hasNeighbors={!mini}
-  class:btn-success={!$poll.allowVote}
-  class:btn-danger={$poll.allowVote}
-  use:tippy={{placement: "left", content: (
-    $poll.allowVote ? 
-    "Closes the raffle and disallows joining" :
-    "Allows users to join the raffle"
-  )}}
-  on:click={toggleJoining}>
-  <span class="material-icons">&#xe175;</span>
-  {#if !mini}
-    {$poll.allowVote ? "Close" : "Open"} raffle
-  {/if}
-</button>
-
-{#if !mini}
-<div class="input-group">
-  <span class="input-group-text material-icons helper px-1"
-    use:tippy={suggestHelper}>
-    &#xe88e;
-  </span>
-  <input type="text" class="form-control bottom-left" placeholder="Command" 
-    class:invalid={!$settings.raffleCommand}
-    on:change={doValidation}
-    aria-label="Suggestion command" bind:value={$settings.raffleCommand}>
-</div>
-{/if}

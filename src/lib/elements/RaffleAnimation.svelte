@@ -1,14 +1,14 @@
 <script>
-  import { browser } from '$app/environment' // sveltekit environment 
+  import { browser } from "$app/environment"; // sveltekit environment
   import { onMount, createEventDispatcher } from "svelte";
   import { writable } from "svelte/store";
   import { blur, fly, scale } from "svelte/transition";
-  import { Confetti } from "svelte-confetti"
+  import { Confetti } from "svelte-confetti";
   import { sounds } from "$lib/utils/sounds";
   import { raffle } from "$lib/utils/raffle";
   import { shuffleArray } from "$lib/utils/misc";
-	import UserImage from "./UserImage.svelte";
-	import UserProfileLink from "./UserProfileLink.svelte";
+  import UserImage from "./UserImage.svelte";
+  import UserProfileLink from "./UserProfileLink.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -16,7 +16,7 @@
     step: 2,
     slowdown: 40,
     last: 90,
-    stop: 210
+    stop: 210,
   };
 
   /*
@@ -35,7 +35,7 @@
   const itemNodes = [];
   let elementContainer;
 
-  function reorderElements (index) {
+  function reorderElements(index) {
     if (!elementContainer) return;
 
     // this is some waytoodank shit
@@ -47,41 +47,49 @@
     const scaleBreakpoint = isPortraitMode ? 207.5 : 147.5;
 
     itemNodes.forEach((el, i) => {
-      let relativeIndex = (i - (index % itemNodes.length) + 2);
+      let relativeIndex = i - (index % itemNodes.length) + 2;
 
-      let offset = offsetConstant + ((relativeIndex - indexOffset)*offsetPerIndex);
-      offset -= itemNodes.length*offsetPerIndex*Number(relativeIndex >= itemNodes.length/2);
-      offset += itemNodes.length*offsetPerIndex*Number(relativeIndex < -itemNodes.length/2);
+      let offset = offsetConstant + (relativeIndex - indexOffset) * offsetPerIndex;
+      offset -= itemNodes.length * offsetPerIndex * Number(relativeIndex >= itemNodes.length / 2);
+      offset += itemNodes.length * offsetPerIndex * Number(relativeIndex < -itemNodes.length / 2);
 
-      const scale = Math.min(1, Math.pow(1 - 0.6*Math.abs(offset - scaleBreakpoint)/scaleBreakpoint, 4));
+      const scale = Math.min(
+        1,
+        Math.pow(1 - (0.6 * Math.abs(offset - scaleBreakpoint)) / scaleBreakpoint, 4)
+      );
       const winnerScale = isSpinEnded ? 1.3 : 1;
 
       const conformedOffset = offset;
 
       el.style.left = conformedOffset + "%";
-      el.style.transform = `scale(${scale*1*winnerScale}) translateX(${50*(scale*winnerScale - 1)}%)`;
-      el.style.visibility = (
-        offset < 40 || offset > (250 + Number(isPortraitMode)*50)
-      ) ? "hidden" : "visible";
-      el.style.zIndex = Math.round(100*scale);
-      el.style.opacity = isSpinEnded ? Number(scale === 1) : (0.5 + 0.5*scale);
+      el.style.transform = `scale(${scale * 1 * winnerScale}) translateX(${
+        50 * (scale * winnerScale - 1)
+      }%)`;
+      el.style.visibility =
+        offset < 40 || offset > 250 + Number(isPortraitMode) * 50 ? "hidden" : "visible";
+      el.style.zIndex = Math.round(100 * scale);
+      el.style.opacity = isSpinEnded ? Number(scale === 1) : 0.5 + 0.5 * scale;
     });
   }
-  scrollIndex.subscribe(value => {
+  scrollIndex.subscribe((value) => {
     reorderElements(value);
   });
 
-  function scrollElements (delta) {
+  function scrollElements(delta) {
     $scrollIndex = ($scrollIndex + delta) % items.length;
     sounds.roll.forcePlay();
   }
 
-  window.addEventListener("resize", () => {
-    reorderElements($scrollIndex)
-  }, {passive: true});
-  
+  window.addEventListener(
+    "resize",
+    () => {
+      reorderElements($scrollIndex);
+    },
+    { passive: true }
+  );
 
-  let lastTorque = null, isSpinEnded = false;
+  let lastTorque = null,
+    isSpinEnded = false;
   onMount(() => {
     if (!browser) return;
     isSpinEnded = false;
@@ -90,7 +98,7 @@
     while (items.length < 20) {
       items = items.concat(Array.from($raffle.entrants.values()));
     }
-    items = shuffleArray(items.map(user => $raffle.entries.get(user)));
+    items = shuffleArray(items.map((user) => $raffle.entries.get(user)));
     reorderElements(0);
 
     sounds.start.play();
@@ -98,16 +106,16 @@
 
     let delay = 1;
     const timing = Object.assign({}, timings);
-    
+
     const tFactor = 3; // used to be a calculated param based on projected browser fps
     timing.step /= tFactor;
 
     // torque is a step of animation
     const torque = () => {
       delay += timings.step;
-      if (delay > timing.slowdown) delay += 2*timings.step;
+      if (delay > timing.slowdown) delay += 2 * timings.step;
       if (delay > timing.last) {
-        delay += 5*timings.step;
+        delay += 5 * timings.step;
         sounds.suspense.play();
       }
       if (delay > timing.stop) {
@@ -117,7 +125,7 @@
         return;
       }
       scrollElements(1);
-      lastTorque = setTimeout(torque, 100+delay);
+      lastTorque = setTimeout(torque, 100 + delay);
     };
     torque();
 
@@ -126,14 +134,14 @@
     };
   });
 
-  function spinEnded () {
+  function spinEnded() {
     isSpinEnded = true;
     const chosenElement = items[$scrollIndex];
     console.info("Winner:", chosenElement);
     // play sound
     sounds.win.play();
     // hide non-winners
-    itemNodes.forEach((item,idx) => {
+    itemNodes.forEach((item, idx) => {
       if (idx !== $scrollIndex) {
         item.style.opacity = 0;
       } else {
@@ -142,13 +150,61 @@
     });
   }
 
-  function stopSpin () {
+  function stopSpin() {
     const chosenElement = items[$scrollIndex];
     $raffle.getWinner(chosenElement.username);
     dispatch("drawn", chosenElement);
     isSpinEnded = false; // stops confetti
   }
 </script>
+
+<div class="carousel">
+  {#if items.length > 0}
+    <div class="elements" bind:this={elementContainer} in:blur={{ duration: 1000, amount: 10 }}>
+      <div class="elements-inner">
+        {#each items as entry, i}
+          <div class="project-square" bind:this={itemNodes[i]}>
+            <div class="project-icon" style:border-bottom-color={entry.usercolor || "gray"}>
+              <UserImage user={entry.username} h="300px" w="300px" color={entry.usercolor} />
+            </div>
+            <div class="username-caption">
+              <UserProfileLink user={entry.username}>
+                {entry.author}
+              </UserProfileLink>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
+  {:else}
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  {/if}
+</div>
+
+{#if isSpinEnded}
+  <div class="glower" in:scale={{ duration: 500 }} />
+
+  <div class="panel" transition:fly={{ duration: 1000, y: 300 }}>
+    <button class="btn btn-success" on:click={stopSpin}> Nice! </button>
+  </div>
+
+  <!-- confetti -->
+  <div class="confetti">
+    <Confetti
+      x={[-5, 5]}
+      y={[0, 0.1]}
+      delay={[0, 2000]}
+      colorArray={["yellow", "lime", "green", "yellow"]}
+      size="12"
+      infinite
+      duration="5000"
+      amount="100"
+      fallDistance="100vh"
+    />
+  </div>
+{/if}
 
 <style>
   .carousel {
@@ -179,7 +235,7 @@
     width: 40%;
     height: 50%;
     min-width: 40%;
-    transition: all .4s ease;
+    transition: all 0.4s ease;
     color: white;
   }
   .project-square::after {
@@ -194,7 +250,7 @@
     background-size: cover;
     border-radius: 1em;
     transform: translateX(-50%);
-    transition: filter .1s ease;
+    transition: filter 0.1s ease;
     filter: none;
     color: transparent;
     user-select: none;
@@ -264,7 +320,7 @@
     pointer-events: none;
   }
 
-  @media all and (orientation:portrait) {
+  @media all and (orientation: portrait) {
     .elements-inner {
       transform: translate(-163.5%, 20%);
     }
@@ -282,51 +338,3 @@
     }
   }
 </style>
-
-<div class="carousel">
-
-{#if items.length > 0}
-
-<div class="elements" bind:this={elementContainer} in:blur={{duration: 1000, amount: 10}}>
-  <div class="elements-inner">
-    {#each items as entry, i}
-    <div class="project-square" bind:this={itemNodes[i]}>
-      <div class="project-icon" style:border-bottom-color={entry.usercolor || "gray"}>
-        <UserImage user={entry.username} h="300px" w="300px" color={entry.usercolor} />
-      </div>
-      <div class="username-caption">
-        <UserProfileLink user={entry.username}>
-          {entry.author}
-        </UserProfileLink>
-      </div>
-    </div>
-    {/each}
-  </div>
-</div>
-
-{:else}
-
-<div class="spinner-border text-secondary" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-
-{/if}
-
-</div>
-
-{#if isSpinEnded}
-  <div class="glower" in:scale={{duration:500}}></div>
-
-  <div class="panel" transition:fly={{duration:1000, y:300}}>
-    <button class="btn btn-success" on:click={stopSpin}>
-      Nice!
-    </button>
-  </div>
-
-  <!-- confetti -->
-  <div class="confetti">
-    <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[0, 2000]} 
-      colorArray={["yellow", "lime", "green", "yellow"]} size=12
-      infinite duration=5000 amount=100 fallDistance="100vh" />
-  </div>
-{/if}

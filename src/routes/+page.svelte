@@ -1,6 +1,6 @@
 <script>
   import { browser } from "$app/environment";
-  import { fade } from 'svelte/transition';
+  import { fade } from "svelte/transition";
   import { Spinner } from "sveltestrap";
 
   import { initialize as initTMI } from "$lib/utils/chat.js";
@@ -14,15 +14,15 @@
   import YesNoPoll from "$lib/content/YesNoPoll.svelte";
 
   let sidebarPresence = true;
-  function changeSidebarPresence () {
-    sidebarPresence = (window.innerHeight < window.innerWidth);
+  function changeSidebarPresence() {
+    sidebarPresence = window.innerHeight < window.innerWidth;
   }
   if (browser) changeSidebarPresence(); // toggles immediate presence check
 
   const componentMap = {
     raffle: Raffle,
     yesno: YesNoPoll,
-    default: DefaultPoll
+    default: DefaultPoll,
   };
 
   let activeComponent = componentMap.default;
@@ -43,26 +43,9 @@
   if (browser) {
     const img = new Image();
     img.src = "./img/donkchat.gif";
-    img.onload = () => preloadEnded = true;
+    img.onload = () => (preloadEnded = true);
   } else preloadEnded = true;
 </script>
-
-<style>
-  .main {
-    flex: 1 0 0;
-    max-height: 100%;
-    overflow: auto;
-    padding: 0 1em;
-  }
-
-  @media all and (orientation:portrait) {
-    .main {
-      position: relative;
-      padding: 0 64px 0 4px;
-      width: 100%;
-    }
-  }
-</style>
 
 <svelte:head>
   <title>not chat.vote</title>
@@ -75,22 +58,41 @@
   <NavBar />
 
   {#if browser && preloadEnded}
+    <div class="flex-grow-1 d-flex flex-row overflow-hidden position-relative">
+      {#key activeComponent}
+        <div class="main" in:fade={{ duration: 200, delay: 0 }}>
+          <svelte:component this={activeComponent} />
+        </div>
+      {/key}
 
-  <div class="flex-grow-1 d-flex flex-row overflow-hidden position-relative">
-    {#key activeComponent}
-      <div class="main" in:fade={{duration:200, delay:0}}>
-        <svelte:component this={activeComponent} />
-      </div>
-    {/key}
-
-    <SideBar bind:currentBlock visibility={sidebarPresence} />
-  </div>
-  
+      <SideBar bind:currentBlock visibility={sidebarPresence} />
+    </div>
   {:else}
-
-  <div class="w-100 h-100 d-flex">
-    <Spinner size="lg" color="secondary" type="border" class="m-auto" style="width: 4em; height: 4em;" />
-  </div>
-
+    <div class="w-100 h-100 d-flex">
+      <Spinner
+        size="lg"
+        color="secondary"
+        type="border"
+        class="m-auto"
+        style="width: 4em; height: 4em;"
+      />
+    </div>
   {/if}
 </div>
+
+<style>
+  .main {
+    flex: 1 0 0;
+    max-height: 100%;
+    overflow: auto;
+    padding: 0 1em;
+  }
+
+  @media all and (orientation: portrait) {
+    .main {
+      position: relative;
+      padding: 0 64px 0 4px;
+      width: 100%;
+    }
+  }
+</style>

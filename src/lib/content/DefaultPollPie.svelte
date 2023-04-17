@@ -8,13 +8,14 @@
 
   import SpoilerBlock from "../elements/SpoilerBlock.svelte";
 
-  let canvas = null, chart = null;
+  let canvas = null,
+    chart = null;
   $: if (chart) {
     const entries = Array.from($poll.entries.values());
-    chart.data.labels = entries.map(e => `[${e.id}] ${e.text}`);
-    chart.data.datasets[0].data = entries.map(e => e.score);
-    chart.data.datasets[0].backgroundColor = entries.map(e => e.bgcolor);
-    chart.data.datasets[0].borderColor = entries.map(e => e.bordercolor);
+    chart.data.labels = entries.map((e) => `[${e.id}] ${e.text}`);
+    chart.data.datasets[0].data = entries.map((e) => e.score);
+    chart.data.datasets[0].backgroundColor = entries.map((e) => e.bgcolor);
+    chart.data.datasets[0].borderColor = entries.map((e) => e.bordercolor);
     chart.update();
   }
 
@@ -24,38 +25,45 @@
       options: {
         animation: {
           duration: 200,
-          easing: 'easeInCubic',
+          easing: "easeInCubic",
           delay: 0,
-          loop: false
+          loop: false,
         },
-        indexAxis: 'y',
+        indexAxis: "y",
         plugins: {
           legend: {
-            display: false
+            display: false,
           },
           tooltip: {
-            enabled: true
-          }
-        }
+            enabled: true,
+          },
+        },
       },
       data: {
         labels: [],
         datasets: [
           {
-            label: 'Votes',
+            label: "Votes",
             data: [],
             backgroundColor: [],
             borderWidth: 2,
             borderColor: [],
           },
         ],
-      }
+      },
     });
     return () => {
       chart?.destroy();
     };
-  })
+  });
 </script>
+
+<!--content-->
+<div class="main">
+  <SpoilerBlock hide={$settings.hideVotes}>
+    <canvas bind:this={canvas} />
+  </SpoilerBlock>
+</div>
 
 <style>
   .main {
@@ -68,10 +76,3 @@
     height: 100%;
   }
 </style>
-
-<!--content-->
-<div class="main">
-  <SpoilerBlock hide={$settings.hideVotes}>
-    <canvas bind:this={canvas}></canvas>
-  </SpoilerBlock>
-</div>
