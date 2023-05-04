@@ -5,6 +5,7 @@
   import UserProfileLink from "./UserProfileLink.svelte";
 
   export let winner = null,
+    header = "The winner is:",
     html = false;
 
   const dispatch = createEventDispatcher();
@@ -17,7 +18,7 @@
 </script>
 
 {#if winner}
-  <Modal body header="The winner is:" isOpen={open} {toggle} centered={true}>
+  <Modal body {header} isOpen={open} {toggle} centered={true}>
     <div class="winner">
       {#if html}
         {@html winner.renderText || "???"}

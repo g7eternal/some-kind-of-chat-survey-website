@@ -19,7 +19,7 @@ export const chatOptions = {
 
 let pollCounter = 0; // counter (key) for polls - multipoll support?
 
-class PollEntry {
+export class PollEntry {
   // element in poll to be voted on
   constructor(id, tags, message) {
     this.id = id;

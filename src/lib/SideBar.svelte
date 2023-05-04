@@ -3,6 +3,7 @@
   import { yesNoPoll } from "./utils/yes_no";
   import { poll } from "./utils/poll";
   import { raffle } from "./utils/raffle";
+  import { ratingPoll } from "./utils/rating";
   import { tippy } from "./utils/tippy";
   import { showAdviceFriend } from "./utils/adviceFriend";
 
@@ -130,6 +131,28 @@
       </li>
     {/if}
 
+    {#if currentBlock === "rating"}
+      <li class="nav-item">
+        <VoteBlock poll={ratingPoll} mini={!presence} />
+
+        {#if presence}
+          <div class="form-check my-1">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="pollOptions_hideVotes"
+              bind:checked={$settings.hideVotes}
+            />
+            <label class="form-check-label" for="pollOptions_hideVotes">
+              <span class="material-icons">&#xe8f5;</span>
+              Hide vote count
+            </label>
+          </div>
+        {/if}
+      </li>
+    {/if}
+
     <li class="nav-item">
       <AdditionalOptions mini={!presence} />
     </li>
@@ -156,6 +179,12 @@
     {#if currentBlock === "raffle"}
       <li class="nav-item">
         <RestartBlock poll={raffle} mini={!presence} />
+      </li>
+    {/if}
+
+    {#if currentBlock === "rating"}
+      <li class="nav-item">
+        <RestartBlock poll={ratingPoll} mini={!presence} />
       </li>
     {/if}
 
@@ -238,6 +267,31 @@
           {#if presence}
             Raffle mode
             <small>Pick a random active chatter</small>
+          {/if}
+        </label>
+
+        <input
+          type="radio"
+          class="btn-check"
+          name="togglePollMode"
+          on:change={switchActive}
+          data-scene="rating"
+          id="pollMode_rating"
+          autocomplete="off"
+        />
+        <label
+          class="btn btn-outline-secondary"
+          for="pollMode_rating"
+          use:tippy={{
+            placement: "left",
+            content: "Switch to <b>rating mode</b>",
+            allowHTML: true,
+          }}
+        >
+          <span class="material-icons">&#xe8dd;</span>
+          {#if presence}
+            Rating mode
+            <small>Get chat's opinion on something</small>
           {/if}
         </label>
       </div>

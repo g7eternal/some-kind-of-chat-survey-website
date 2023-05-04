@@ -1,5 +1,6 @@
 <script>
   import { tippy } from "../utils/tippy";
+  import { PollEntry } from "$lib/utils/poll.js";
   import { settings } from "$lib/utils/stores.js";
   import { showAdviceFriend } from "$lib/utils/adviceFriend.js";
   import WinnerModal from "../elements/WinnerModal.svelte";
@@ -11,11 +12,23 @@
     placement: "right",
     content: "<h3>Vote command</h3>Vote message must start with this text",
   };
+  const rateHelper = {
+    placement: "right",
+    content: "<h3>Max rating</h3>Users will rate an item on a scale from 1 to this number",
+  };
 
   function doValidation() {
     if ($settings.suggestCommand === $settings.voteCommand) {
       showAdviceFriend(
         "Your <b>vote</b> and <b>suggest</b> commands are identical! This will not work well."
+      );
+    }
+  }
+
+  function doRatingValidation() {
+    if ($poll.rateCeiling < $poll.rateFloor) {
+      showAdviceFriend(
+        "People usually rate stuff as a one-to-something. Therefore max rating should be more than 1."
       );
     }
   }
@@ -31,11 +44,28 @@
   let lastWinner = null;
   function stopVoting() {
     try {
-      const winner = $poll.startVoting().getWinner();
-      console.info("The winner is:", winner);
+      if ($poll.type === "rating") {
+        const totalRating = $poll.startVoting().getWinner();
+        if (!totalRating) {
+          // no winner? nobody voted?
+          lastWinner = totalRating;
+          return;
+        }
+        const stringRating = totalRating.toPrecision(
+          Math.max(Math.log10($poll.rateCeiling), 1) + 1
+        );
 
-      lastWinner = winner;
+        console.info("Final rating is:", totalRating);
+        lastWinner = new PollEntry(-1, {}, stringRating);
+        lastWinner.renderText = `<b class="text-warning">${stringRating}</b> out of <b class="text-success">${$poll.rateCeiling}</b>`;
+
+        return;
+      }
+
+      lastWinner = $poll.startVoting().getWinner();
+      console.info("The winner is:", lastWinner);
     } catch (e) {
+      console.error(e);
       showAdviceFriend(e.message);
     }
   }
@@ -76,6 +106,26 @@
   {/if}
 </button>
 
+{#if $poll.type === "rating" && !mini}
+  <div class="input-group">
+    <span class="input-group-text material-icons helper px-1" use:tippy={rateHelper}>
+      &#xe8e5;
+    </span>
+    <input
+      type="number"
+      min={$poll.rateFloor}
+      max={1000}
+      class="form-control bottom-left"
+      disabled={$poll.allowVote}
+      class:invalid={$poll.rateFloor > $poll.rateCeiling}
+      on:change={doRatingValidation}
+      placeholder="Max rating"
+      aria-label="Max rating number"
+      bind:value={$poll.rateCeiling}
+    />
+  </div>
+{/if}
+
 {#if $poll.type === "poll" && !mini}
   <div class="input-group">
     <span class="input-group-text material-icons helper px-1" use:tippy={voteHelper}>
@@ -96,7 +146,12 @@
 
 <!-- celebratory block -->
 {#if lastWinner}
-  <WinnerModal winner={lastWinner} html={true} on:toggle={clearLastWinner} />
+  <WinnerModal
+    winner={lastWinner}
+    html={true}
+    on:toggle={clearLastWinner}
+    header={$poll._winHeader}
+  />
 {/if}
 
 <style>

@@ -11,6 +11,7 @@
 
   import DefaultPoll from "$lib/content/DefaultPoll.svelte";
   import Raffle from "$lib/content/Raffle.svelte";
+  import Rating from "$lib/content/Rating.svelte";
   import YesNoPoll from "$lib/content/YesNoPoll.svelte";
 
   let sidebarPresence = true;
@@ -22,6 +23,7 @@
   const componentMap = {
     raffle: Raffle,
     yesno: YesNoPoll,
+    rating: Rating,
     default: DefaultPoll,
   };
 
