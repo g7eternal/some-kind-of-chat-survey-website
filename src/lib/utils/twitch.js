@@ -72,7 +72,10 @@ export function doTokenValidation() {
       },
       method: "GET",
     })
-    .then((r) => r.json())
+    .then((r) => {
+      if (r.status !== 200) throw new Error(r.status);
+      return r.json();
+    })
     .then((data) => {
       baseAuth.channel = data.login;
       baseAuth.user_id = data.user_id;
